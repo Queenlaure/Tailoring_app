@@ -14,7 +14,7 @@ import BlueButton from '../components/buttons/BlueButton';
 const GetStarted = ({navigation}: any) => {
   return (
     <SafeAreaView
-      style={{ flex: 1, paddingHorizontal: 20, backgroundColor: COLORS.white }}
+      style={{ flex: 1, paddingHorizontal: 20, paddingTop: 40, backgroundColor: COLORS.white }}
     >
       <View style={{ width: '60%', height: '30%', marginTop: 60 }}>
         <Image source={require('../assets/tailor1.jpg')} style={styles.img1} />

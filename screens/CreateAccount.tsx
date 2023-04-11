@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   View,
@@ -12,16 +12,28 @@ import PasswordField from '../components/inputFields/PasswordField';
 import BlueButton from '../components/buttons/BlueButton';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../utils/colors';
+import CreateAccountRadiobtn from '../components/buttons/CreateAccountRadiobtn';
 
 const CreateAccount = ({ navigation }: any) => {
+  const data = [
+    { value: 'Apple', key: 1 },
+    { value: 'Samsung', key: 2 },
+    { value: 'Blackberry', key: 3 },
+  ];
+
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: COLORS.white, alignItems: 'center' }}
+      style={{
+        flex: 1,
+        paddingTop: 40,
+        backgroundColor: COLORS.white,
+        alignItems: 'center',
+      }}
     >
       <View style={styles.hero}>
         <Text style={styles.heading}>Create An Account</Text>
         <Text style={styles.subHeading}>
-          Create your account, it takes less than a munite
+          Create your account, it takes less than a minute.
         </Text>
       </View>
       <View style={styles.input}>
@@ -29,6 +41,12 @@ const CreateAccount = ({ navigation }: any) => {
         <PasswordField label="Password:" placeholder="xxxxxxxxxx" password />
         <PasswordField label="Tel:" placeholder="000000000" />
       </View>
+
+      <View style={{flexDirection:'row', marginTop: 15}}>
+        <Text style={{fontWeight: 'bold', marginTop: 15}}>Signing In as:</Text>
+        <CreateAccountRadiobtn />
+      </View>
+
       <View style={styles.create}>
         <BlueButton text="Create an Account" />
       </View>
@@ -72,10 +90,10 @@ const CreateAccount = ({ navigation }: any) => {
 export default CreateAccount;
 
 const styles = StyleSheet.create({
-    hero: {
-      marginTop: 20,
-      alignItems: 'center'
-    },
+  hero: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
   heading: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -122,4 +140,5 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginLeft: 8,
   },
+
 });

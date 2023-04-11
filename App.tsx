@@ -8,6 +8,7 @@ import GetStarted from './screens/GetStarted';
 import Signup from './screens/Signup';
 import CreateAccount from './screens/CreateAccount';
 import Login from './screens/Login';
+import Home from './screens/Home';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -16,10 +17,11 @@ export default function App() {
     <NavigationContainer>
       <StatusBar style='auto' backgroundColor={COLORS.white} />
       <Stack.Navigator>
-        <Stack.Screen name="Get Started" component={GetStarted} />
-        <Stack.Screen name="Sign Up" component={Signup} />
-        <Stack.Screen name="Create Account" component={CreateAccount} />
-        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Get Started" component={GetStarted} options={{headerShown: false}} />
+        <Stack.Screen name="Sign Up" component={Signup} options={{headerShown: false}} />
+        <Stack.Screen name="Create Account" component={CreateAccount} options={{headerShown: false}} />
+        <Stack.Screen name="Login" component={Login} options={{headerShown: false}} />
+        <Stack.Screen name="Home" component={Home} options={{headerShown: false}} />
       </Stack.Navigator>
     </NavigationContainer>
     </>

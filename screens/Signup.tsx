@@ -51,10 +51,10 @@ const styles = StyleSheet.create({
   text: {
     lineHeight: 54,
     textAlign: 'center',
-    backgroundColor: '#000000c0',
+    backgroundColor: '#000000a0',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 300,
+    paddingVertical: 350,
   },
   //   child: {
   //     flex: 1,

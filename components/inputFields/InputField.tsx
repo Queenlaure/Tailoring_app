@@ -11,11 +11,11 @@ import {
 import { COLORS } from '../../utils/colors';
 
 interface Props {
-  label: string;
-  placeholder: string;
+  label?: string;
+  placeholder?: string;
 }
 
-const BlueButton = ({ label, placeholder }: Props) => {
+const InputField = ({ label, placeholder }: Props) => {
   return (
     <View>
       <Text style={styles.label}>{label}</Text>
@@ -26,7 +26,7 @@ const BlueButton = ({ label, placeholder }: Props) => {
   );
 };
 
-export default BlueButton;
+export default InputField;
 
 const styles = StyleSheet.create({
   inputContainer: {
