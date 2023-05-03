@@ -22,7 +22,7 @@ const Login = ({ navigation }: any) => {
       </View>
       <TouchableOpacity
         activeOpacity={0.8}
-        onPress={() => navigation.navigate('Home', { name: 'Home' })}
+        onPress={() => navigation.navigate('HomeStack')}
       >
         <View style={{ alignItems: 'center', marginTop: 40 }}>
           <BlueButton text="Save" />

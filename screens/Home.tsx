@@ -9,13 +9,14 @@ import {
 } from 'react-native';
 import InputField from '../components/inputFields/InputField';
 import Radio from '../components/buttons/RadioButton';
+
 import { COLORS } from '../utils/colors';
 import { Ionicons } from '@expo/vector-icons';
 import BlueButton from '../components/buttons/BlueButton';
 
 const width = Dimensions.get('screen').width / 2 - 30;
 
-const Home = () => {
+const Home = ({ navigation }: any) => {
   return (
     <View
       style={{
@@ -54,7 +55,11 @@ const Home = () => {
         <View>
           <Text style={{ marginTop: 40, fontWeight: 'bold' }}>EXPLORE</Text>
           <View style={styles.btnsContainer}>
-            <View style={styles.addCustomer}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => navigation.navigate('AddCustomer')}
+              style={styles.addCustomer}
+            >
               <View
                 style={{
                   alignItems: 'center',
@@ -73,8 +78,12 @@ const Home = () => {
                   Add Customer
                 </Text>
               </View>
-            </View>
-            <View style={styles.addOrder}>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => navigation.navigate('AddOrder')}
+              style={styles.addOrder}
+            >
               <View
                 style={{
                   alignItems: 'center',
@@ -93,7 +102,7 @@ const Home = () => {
                   Add Order
                 </Text>
               </View>
-            </View>
+            </TouchableOpacity>
             <View style={styles.viewCustomers}>
               <View
                 style={{
@@ -171,6 +180,6 @@ const styles = StyleSheet.create({
   btnsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 15
+    marginTop: 15,
   },
 });

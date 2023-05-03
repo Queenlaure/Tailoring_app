@@ -3,12 +3,28 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import { COLORS } from './utils/colors';
 import GetStarted from './screens/GetStarted';
 import Signup from './screens/Signup';
 import CreateAccount from './screens/CreateAccount';
 import Login from './screens/Login';
 import Home from './screens/Home';
+import AddCustomer from './screens/AddCustomer';
+import AddOrder from './screens/AddOrder';
+import SelectItem from './screens/SelectItem';
+import Shirt from './screens/Shirt';
+import Gown from './screens/Gown';
+import Agbada from './screens/Agbada';
+import Pants from './screens/Pants';
+import Jumpsuit from './screens/Jumpsuit';
+import Corperate from './screens/Corperate';
+import Suit from './screens/Suit';
+import Jacket from './screens/Jacket';
+import Blouse from './screens/Blouse';
+import HomeStack from './navigation/Homestack';
+
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -21,7 +37,21 @@ export default function App() {
         <Stack.Screen name="Sign Up" component={Signup} options={{headerShown: false}} />
         <Stack.Screen name="Create Account" component={CreateAccount} options={{headerShown: false}} />
         <Stack.Screen name="Login" component={Login} options={{headerShown: false}} />
-        <Stack.Screen name="Home" component={Home} options={{headerShown: false}} />
+        <Stack.Screen name="AddCustomer" component={AddCustomer} options={{headerShown: false}} />
+        <Stack.Screen name="AddOrder" component={AddOrder} options={{headerShown: false}} />
+        <Stack.Screen name="SelectItem" component={SelectItem} options={{headerShown: false}} />
+        <Stack.Screen name="Shirt" component={Shirt} options={{headerShown: false}} />
+        <Stack.Screen name="Gown" component={Gown} options={{headerShown: false}} />
+        <Stack.Screen name="Agbada" component={Agbada} options={{headerShown: false}} />
+        <Stack.Screen name="Pants" component={Pants} options={{headerShown: false}} />
+        <Stack.Screen name="Jumpsuit" component={Jumpsuit} options={{headerShown: false}} />
+        <Stack.Screen name="Corperate" component={Corperate} options={{headerShown: false}} />
+        <Stack.Screen name="Suit" component={Suit} options={{headerShown: false}} />
+        <Stack.Screen name="Jacket" component={Jacket} options={{headerShown: false}} />
+        <Stack.Screen name="Blouse" component={Blouse} options={{headerShown: false}} />
+        <Stack.Screen name="HomeStack" component={HomeStack} options={{headerShown: false} } />
+        
+        {/* <Stack.Screen name="Home" component={Home} options={{headerShown: false}} /> */}
       </Stack.Navigator>
     </NavigationContainer>
     </>
