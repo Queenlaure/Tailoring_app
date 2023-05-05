@@ -1,21 +1,56 @@
-import { View, Text } from 'react-native';
-import React from 'react';
+import { View, Text , StyleSheet, ScrollView} from 'react-native';
+import React, {useState} from 'react';
 import { COLORS } from '../utils/colors';
+import MainHeading from '../components/headings/MainHeading';
+import InputField from '../components/inputFields/InputField';
+import GreyInputField from '../components/inputFields/GreyInputField';
+import BlueButton from '../components/buttons/BlueButton';
 
-const Suit = () => {
+interface Props {
+userOption?: any;
+route?: any;
+}
+
+const Suit = ({route, userOption}: Props) => {
+  const {selectedUserOption} = route.params;
   return (
     <View
       style={{
         flex: 1,
-        backgroundColor: COLORS.lightestGrey,
+        backgroundColor: COLORS.white,
         paddingHorizontal: 30,
         paddingTop: 55,
         alignItems: 'center',
       }}
     >
-      <Text>Suit</Text>
+    <MainHeading title='John Davie' userOption={selectedUserOption}  />
+    <View style={{height:580}} >
+    <ScrollView showsVerticalScrollIndicator={false} >
+      <GreyInputField label='Neck:' />
+      <GreyInputField label='Shoulder:' />
+      <GreyInputField label='Arm hole:' />
+      <GreyInputField label='Chest:' />
+      <GreyInputField label='Burst:' />
+      <GreyInputField label='Waist:' />
+      <GreyInputField label='Arm length:' />
+      <GreyInputField label='Hips:' />
+      <GreyInputField label='Crutch depth:' />
+      <GreyInputField label='Back width:' />
+      <GreyInputField label='Bicep:' />
+      <GreyInputField label='Wrist:' />
+      <GreyInputField label='Charge (FCFA):' placeholder='0000' />
+    </ScrollView>
+    </View>
+    <View style={{marginTop: 30}}>
+    <BlueButton text='Save' />
+    </View>
+    
     </View>
   );
 };
 
 export default Suit;
+
+const styles = StyleSheet.create({
+
+});

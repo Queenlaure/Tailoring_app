@@ -9,13 +9,24 @@ import {
   SafeAreaView,
 } from 'react-native';
 import BlueButton from '../components/buttons/BlueButton';
+import AppLoading from 'expo-app-loading';
+import {
+  useFonts,
+  Raleway_200ExtraLight,
+  Raleway_400Regular,
+  Raleway_900Black,
+} from '@expo-google-fonts/raleway';
 
-
-const GetStarted = ({navigation}: any) => {
+const GetStarted = ({ navigation }: any) => {
+  let [fontsLoaded, error] = useFonts({
+    Raleway_400Regular,
+    'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
+  });
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
   return (
-    <SafeAreaView
-      style={{ flex: 1, paddingHorizontal: 20, paddingTop: 40, backgroundColor: COLORS.white }}
-    >
+    <SafeAreaView style={styles.container}>
       <View style={{ width: '60%', height: '30%', marginTop: 60 }}>
         <Image source={require('../assets/tailor1.jpg')} style={styles.img1} />
         <Image source={require('../assets/tailor2.jpg')} style={styles.img2} />
@@ -23,18 +34,17 @@ const GetStarted = ({navigation}: any) => {
         <Image source={require('../assets/tailor4.jpg')} style={styles.img4} />
       </View>
       <Text style={styles.description}>
-        Keep track of your orders and customer's measurements and locate available tailors in your community.
+        Keep track of your orders and customer's measurements and locate
+        available tailors in your community.
       </Text>
       <TouchableOpacity
         activeOpacity={0.8}
-        onPress={() => navigation.navigate("Sign Up", { name: "Signup" })}
+        onPress={() => navigation.navigate('Sign Up', { name: 'Signup' })}
       >
         <View style={styles.bluebtn}>
-      <BlueButton text='Get Started' />
-      </View>
+          <BlueButton text="Get Started" />
+        </View>
       </TouchableOpacity>
-      
-      
     </SafeAreaView>
   );
 };
@@ -43,10 +53,11 @@ export default GetStarted;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 40,
     backgroundColor: COLORS.white,
-    marginTop: 30,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    fontFamily:'Poppins'
   },
   img1: {
     width: '100%',
@@ -81,14 +92,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 170,
     fontWeight: 'bold',
-    alignItems:'center',
+    alignItems: 'center',
     textAlign: 'center',
-    padding: 15
-    
+    padding: 15,
   },
   bluebtn: {
     justifyContent: 'center',
-    alignItems: 'center', 
-    marginTop: 25
-  }
+    alignItems: 'center',
+    marginTop: 25,
+  },
 });

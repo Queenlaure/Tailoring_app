@@ -23,10 +23,20 @@ import Suit from './screens/Suit';
 import Jacket from './screens/Jacket';
 import Blouse from './screens/Blouse';
 import HomeStack from './navigation/Homestack';
+import AppLoading from 'expo-app-loading';
+import {useFonts, Raleway_200ExtraLight, Raleway_400Regular, Raleway_900Black } from '@expo-google-fonts/raleway';
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+  let [fontsLoaded, error]=useFonts({
+    Raleway_400Regular
+  });
+
+  if (!fontsLoaded) {
+    return <AppLoading />
+  }
+
   const Stack = createNativeStackNavigator();
   return (
     <>
@@ -40,7 +50,7 @@ export default function App() {
         <Stack.Screen name="AddCustomer" component={AddCustomer} options={{headerShown: false}} />
         <Stack.Screen name="AddOrder" component={AddOrder} options={{headerShown: false}} />
         <Stack.Screen name="SelectItem" component={SelectItem} options={{headerShown: false}} />
-        <Stack.Screen name="Shirt" component={Shirt} options={{headerShown: false}} />
+        <Stack.Screen name="Shirt" component={Shirt}  options={{headerShown: false}} />
         <Stack.Screen name="Gown" component={Gown} options={{headerShown: false}} />
         <Stack.Screen name="Agbada" component={Agbada} options={{headerShown: false}} />
         <Stack.Screen name="Pants" component={Pants} options={{headerShown: false}} />

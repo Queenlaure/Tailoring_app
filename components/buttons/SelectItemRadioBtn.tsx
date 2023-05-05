@@ -49,14 +49,14 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     margin: 10,
     width: 340,
-    height: 45,
+    height: 48,
     justifyContent: "center",
   },
   selected: {
     backgroundColor: COLORS.blue,
     color: COLORS.white,
     margin: 6,
-    padding: 10,
+    padding: 15,
     borderRadius: 10,
   },
 });

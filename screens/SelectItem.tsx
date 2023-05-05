@@ -19,7 +19,7 @@ const SelectItem = ({ navigation}: Props) => {
     { value: 'Agbada', id: 3 },
     { value: 'Pants', id: 4 },
     { value: 'Jumpsuit', id: 5 },
-    { value: 'Corperate', id: 6 },
+    // { value: 'Corperate', id: 6 },
     { value: 'Suit', id: 7 },
     { value: 'Jacket', id: 8 },
     { value: 'Blouse', id: 9 },
@@ -33,7 +33,7 @@ const SelectItem = ({ navigation}: Props) => {
 
   const handleNextPress = () => {
     if (userOption) {
-      navigation.navigate(userOption);
+      navigation.navigate(userOption, {selectedUserOption:userOption});
     } else {
       navigation.navigate('Get Started');
     }
@@ -58,7 +58,7 @@ const SelectItem = ({ navigation}: Props) => {
           height: 50,
           justifyContent: 'center',
           alignItems: 'center',
-          marginTop: 5,
+          marginTop: 25,
           flexDirection: 'row',
           borderRadius:10
           
