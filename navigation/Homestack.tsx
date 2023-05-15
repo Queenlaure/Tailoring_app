@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Home from '../screens/Home';
@@ -18,6 +18,7 @@ const GalleryName = 'Gallery';
 const OrdersName = 'Orders';
 
 const HomeStack = () => {
+  const [images, setImages] = useState([]);
   return (
     <BottomTab.Navigator
       initialRouteName={homeName}
@@ -66,8 +67,8 @@ const HomeStack = () => {
 
         // options={{ headerShown: false }}
       />
-      <BottomTab.Screen name={OrdersName} component={Gallery} />
-      <BottomTab.Screen name={GalleryName} component={Orders} />
+      <BottomTab.Screen name={OrdersName} component={Orders} options={{ headerShown: false }} />
+      <BottomTab.Screen name={GalleryName} component={Gallery} setImages={setImages} options={{ headerShown: false }} />
     </BottomTab.Navigator>
   );
 };

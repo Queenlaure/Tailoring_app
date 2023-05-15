@@ -14,5 +14,6 @@ export const COLORS = {
     thickPurple: '#da4ed9',
     thickBlue: '#4a9ff0',
     thickBrown: '#ddb475',
-    lightestGrey: '#f2f1ef'
+    lightestGrey: '#f2f1ef',
+    lightBrown: '#e3c3c4'
 }

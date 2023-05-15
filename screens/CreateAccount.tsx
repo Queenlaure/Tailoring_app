@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Text,
   View,
@@ -37,19 +37,29 @@ const CreateAccount = ({ navigation }: any) => {
         </Text>
       </View>
       <View style={styles.input}>
-        <InputField label="Name:" placeholder="name" />
+        <InputField label="Email:" placeholder="example@gmail.com" />
         <PasswordField label="Password:" placeholder="xxxxxxxxxx" password />
-        <PasswordField label="Tel:" placeholder="000000000" />
+        <PasswordField
+          label="Confirm Password:"
+          placeholder="xxxxxxxxxx"
+          password
+        />
       </View>
 
-      <View style={{flexDirection:'row', marginTop: 15}}>
-        <Text style={{fontWeight: 'bold', marginTop: 15}}>Signing In as:</Text>
+      <View style={{ flexDirection: 'row', marginTop: 15 }}>
+        <Text style={{ fontWeight: 'bold', marginTop: 15 }}>
+          Signing In as:
+        </Text>
         <CreateAccountRadiobtn />
       </View>
 
-      <View style={styles.create}>
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={() => navigation.navigate('Set Profile')}
+        style={styles.create}
+      >
         <BlueButton text="Create an Account" />
-      </View>
+      </TouchableOpacity>
       <View style={styles.orSection}>
         <View style={styles.line}></View>
         <Text>or</Text>
@@ -140,5 +150,4 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginLeft: 8,
   },
-
 });

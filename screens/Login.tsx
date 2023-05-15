@@ -1,34 +1,66 @@
-import React from 'react';
-import { Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  SafeAreaView,
+} from 'react-native';
 import InputField from '../components/inputFields/InputField';
-import Radio from '../components/buttons/RadioButton';
-import { COLORS } from '../utils/colors';
+import PasswordField from '../components/inputFields/PasswordField';
 import BlueButton from '../components/buttons/BlueButton';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS } from '../utils/colors';
+import CreateAccountRadiobtn from '../components/buttons/CreateAccountRadiobtn';
 
 const Login = ({ navigation }: any) => {
+  const data = [
+    { value: 'Apple', key: 1 },
+    { value: 'Samsung', key: 2 },
+    { value: 'Blackberry', key: 3 },
+  ];
+
   return (
-    <View style={{ flex: 1, paddingTop: 70, backgroundColor: COLORS.white }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        paddingTop: 50,
+        backgroundColor: COLORS.white,
+        alignItems: 'center',
+      }}
+    >
       <View style={styles.hero}>
-        <Text style={styles.heading}>Set Up your profile</Text>
+        <Text style={styles.heading}>Log In to your Account</Text>
+        <Text style={styles.subHeading}>Fill in the Information.</Text>
       </View>
-      <View style={{ alignItems: 'center' }}>
-        <InputField placeholder="Shop Name" />
-        <InputField placeholder="Business (Email Address)" />
-        <InputField placeholder="Shop Address" />
+      <View style={styles.input}>
+        <InputField label="Email:" placeholder="example@gmail.com" />
+        <PasswordField label="Password:" placeholder="xxxxxxxxxx" password />
       </View>
-      <View style={styles.radioSection}>
-        <Text style={styles.radioText}>Wears for:</Text>
-        <Radio />
-      </View>
+
       <TouchableOpacity
         activeOpacity={0.8}
         onPress={() => navigation.navigate('HomeStack')}
+        style={styles.create}
       >
-        <View style={{ alignItems: 'center', marginTop: 40 }}>
-          <BlueButton text="Save" />
-        </View>
+        <BlueButton text="Login" />
       </TouchableOpacity>
-    </View>
+      {/* <View style={styles.orSection}>
+        <View style={styles.line}></View>
+        <Text>or</Text>
+        <View style={styles.line}></View>
+      </View>
+      <View style={styles.btn}>
+        <Ionicons
+          name={'logo-google'}
+          size={20}
+          //   style={styles.eye}
+        />
+        <Text style={styles.text}>Sign In with Google</Text>
+      </View> */}
+
+    </SafeAreaView>
   );
 };
 
@@ -36,7 +68,7 @@ export default Login;
 
 const styles = StyleSheet.create({
   hero: {
-    marginTop: 20,
+    marginTop: 30,
     alignItems: 'center',
   },
   heading: {
@@ -44,11 +76,45 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: COLORS.dark,
   },
-  radioSection: {
-    marginTop: 20,
+  subHeading: {
+    color: COLORS.grey,
   },
-  radioText: {
+  input: {
+    marginTop: 30,
+  },
+  create: {
+    marginTop: 40,
+  },
+  line: {
+    width: 160,
+    height: 2,
+    backgroundColor: COLORS.grey,
+    marginTop: 12,
+  },
+  orSection: {
+    flexDirection: 'row',
+    marginTop: 30,
+    marginLeft: 10,
+  },
+  btn: {
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    width: 350,
+    height: 50,
+    borderRadius: 10,
+    justifyContent: 'center',
+    borderColor: COLORS.dark,
+    borderBottomWidth: 1,
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    marginTop: 40,
+    flexDirection: 'row',
+  },
+  text: {
+    color: COLORS.dark,
     fontWeight: 'bold',
-    marginLeft: 40,
+    fontSize: 15,
+    marginLeft: 8,
   },
 });

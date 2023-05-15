@@ -15,15 +15,20 @@ interface Props {
   label?: string;
 }
 
-const Search = ({label}: Props) => {
+const Search = ({ label }: Props) => {
   return (
     <View>
       <Text style={styles.label}>{label}</Text>
       <View style={styles.searchContainer}>
-          <MaterialIcons name="search" size={25} style={{ marginHorizontal: 10 }} color={COLORS.lightGrey} />
-          <TextInput placeholder="Search Customer" style={styles.input} />
-        </View>
-        <Text style={styles.searchBtn}>search</Text>
+        <MaterialIcons
+          name="search"
+          size={25}
+          style={{ marginHorizontal: 10 }}
+          color={COLORS.lightGrey}
+        />
+        <TextInput placeholder="Search Customer" style={styles.input} />
+      </View>
+      <Text style={styles.searchBtn}>search</Text>
     </View>
   );
 };
@@ -31,12 +36,11 @@ const Search = ({label}: Props) => {
 export default Search;
 
 const styles = StyleSheet.create({
-
   label: {
     color: COLORS.dark,
     fontWeight: 'bold',
     fontSize: 14,
-    marginBottom: 15
+    marginBottom: 15,
   },
 
   searchContainer: {
@@ -44,8 +48,8 @@ const styles = StyleSheet.create({
     width: 350,
     backgroundColor: COLORS.light,
     borderRadius: 10,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   input: {
     fontSize: 14,
@@ -59,6 +63,6 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontWeight: 'bold',
     textDecorationLine: 'underline',
-    textDecorationColor: COLORS.blue
-  }
+    textDecorationColor: COLORS.blue,
+  },
 });

@@ -19,17 +19,16 @@ interface Props {
 
 const SelectItemRadioBtn = ({ data, onSelect, userOption, setUserOption }: Props) => {
 
- 
-
   return (
     <View style={{marginTop:30}}>
       {data.map((item: any, index:number) => {
         return (
           <Pressable
+          key={index}
             style={
               item.value === userOption ? styles.selected : styles.unselected
             }
-            key={item.id}
+            
             onPress={() => setUserOption(item.value)}
           >
             <Text style={styles.option}> {item.value}</Text>

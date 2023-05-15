@@ -9,7 +9,8 @@ import GetStarted from './screens/GetStarted';
 import Signup from './screens/Signup';
 import CreateAccount from './screens/CreateAccount';
 import Login from './screens/Login';
-import Home from './screens/Home';
+import SetProfile from './screens/SetProfile';
+// import Home from './screens/Home';
 import AddCustomer from './screens/AddCustomer';
 import AddOrder from './screens/AddOrder';
 import SelectItem from './screens/SelectItem';
@@ -47,6 +48,7 @@ export default function App() {
         <Stack.Screen name="Sign Up" component={Signup} options={{headerShown: false}} />
         <Stack.Screen name="Create Account" component={CreateAccount} options={{headerShown: false}} />
         <Stack.Screen name="Login" component={Login} options={{headerShown: false}} />
+        <Stack.Screen name="Set Profile" component={SetProfile} options={{headerShown: false}} />
         <Stack.Screen name="AddCustomer" component={AddCustomer} options={{headerShown: false}} />
         <Stack.Screen name="AddOrder" component={AddOrder} options={{headerShown: false}} />
         <Stack.Screen name="SelectItem" component={SelectItem} options={{headerShown: false}} />

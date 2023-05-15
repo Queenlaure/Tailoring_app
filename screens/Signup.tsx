@@ -12,7 +12,7 @@ import BlueButton from '../components/buttons/BlueButton';
 import OutlineButton from '../components/buttons/OutlineButton';
 import { COLORS } from '../utils/colors';
 
-const Signup = ({navigation}: any) => {
+const Signup = ({ navigation }: any) => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ImageBackground
@@ -24,16 +24,23 @@ const Signup = ({navigation}: any) => {
         <Text style={styles.text}>
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() => navigation.navigate('Create Account', { name: 'CreateAccount' })}
+            onPress={() =>
+              navigation.navigate('Create Account', { name: 'CreateAccount' })
+            }
           >
             <View>
               <BlueButton text="Sign Up" />
             </View>
           </TouchableOpacity>
 
-          <View>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() =>
+              navigation.navigate('Login', { name: 'Login' })
+            }
+          >
             <OutlineButton text="Log In" />
-          </View>
+          </TouchableOpacity>
         </Text>
       </ImageBackground>
     </SafeAreaView>
