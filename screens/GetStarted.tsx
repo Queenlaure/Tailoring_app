@@ -37,14 +37,14 @@ const GetStarted = ({ navigation }: any) => {
         Keep track of your orders and customer's measurements and locate
         available tailors in your community.
       </Text>
-      <TouchableOpacity
-        activeOpacity={0.8}
-        onPress={() => navigation.navigate('Sign Up', { name: 'Signup' })}
+      <View
+        // activeOpacity={0.8}
+        // onPress={() => navigation.navigate('Sign Up', { name: 'Signup' })}
       >
         <View style={styles.bluebtn}>
-          <BlueButton text="Get Started" />
+          <BlueButton text="Get Started" onClickButton={() => navigation.navigate('Sign Up', { name: 'Signup' })} />
         </View>
-      </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };

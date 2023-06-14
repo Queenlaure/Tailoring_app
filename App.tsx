@@ -24,6 +24,7 @@ import Suit from './screens/Suit';
 import Jacket from './screens/Jacket';
 import Blouse from './screens/Blouse';
 import ImageFolderDetails from './screens/ImageFolderDetails';
+import ViewCustomers from './screens/ViewCustomer';
 import HomeStack from './navigation/Homestack';
 
 import AppLoading from 'expo-app-loading';
@@ -65,6 +66,7 @@ export default function App() {
         <Stack.Screen name="Blouse" component={Blouse} options={{headerShown: false}} />
         <Stack.Screen name="HomeStack" component={HomeStack} options={{headerShown: false} } />
         <Stack.Screen name="ImageFolderDetails" component={ImageFolderDetails} options={{headerShown: false} } />
+        <Stack.Screen name="ViewCustomers" component={ViewCustomers} options={{headerShown: false} } />
         
         {/* <Stack.Screen name="Home" component={Home} options={{headerShown: false}} /> */}
       </Stack.Navigator>

@@ -11,13 +11,15 @@ import { COLORS } from '../../utils/colors';
 
 interface Props {
     text: string;
+    onClickButton?: () => void;
+    isLoading?: boolean;
   }
 
-const BlueButton = ({ text }: Props) => {
+const BlueButton = ({ text ,onClickButton,isLoading=false}: Props) => {
   return (
-    <View style={styles.btn}>
+    <TouchableOpacity style={styles.btn} onPress={onClickButton}>
       <Text style={styles.text}>{text}</Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 

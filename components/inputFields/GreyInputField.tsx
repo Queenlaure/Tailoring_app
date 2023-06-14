@@ -13,14 +13,23 @@ import { COLORS } from '../../utils/colors';
 interface Props {
   label?: string;
   placeholder?: string;
+  secureTextEntry?: boolean;
+  onChangeText?: () => void;
+  value?: any
 }
 
-const GreyInputField = ({ label, placeholder }: Props) => {
+const GreyInputField = ({ label, placeholder,secureTextEntry,onChangeText,value }: Props) => {
   return (
     <View style={{marginTop: 15}}>
       <Text style={styles.label}>{label}</Text>
       <View style={styles.inputContainer}>
-        <TextInput placeholder={placeholder} style={styles.placeholder}  />
+      <TextInput
+         placeholder={placeholder} 
+         style={styles.placeholder}  
+         secureTextEntry={secureTextEntry}
+         value={value}
+         onChangeText={onChangeText}
+         />
       </View>
     </View>
   );

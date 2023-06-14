@@ -13,8 +13,79 @@ import BlueButton from '../components/buttons/BlueButton';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../utils/colors';
 import CreateAccountRadiobtn from '../components/buttons/CreateAccountRadiobtn';
+import { useForm, Controller } from 'react-hook-form';
+import FieldInput from '../components/inputFields/FieldInput';
+import NativeUIText from '../components/NativeUIText/NativeUIText';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth, db } from '../firebase-config';
+
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 
 const Login = ({ navigation }: any) => {
+  const [firebaseErr, setFirebaseErr] = useState('');
+  const [presentUser, setPresentUser] = useState({});
+  const [userEmail, setUserEmail] = useState('');
+  const [comparedData, setComparedData] = useState('');
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  // console.log(auth);
+
+  const onSubmit = async (data: any) => {
+    try {
+      const tailor = await signInWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+
+      const tailorRef = collection(db, 'tailor');
+      onAuthStateChanged(auth, (currentUser: any) => {
+        setUserEmail(currentUser.email);
+      });
+
+      console.log(userEmail);
+
+      // Create a query against the collection.
+      const q = query(tailorRef, where('email', '==', userEmail));
+      setPresentUser(q);
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, ' => ', doc.data());
+        if (doc.data().tailor){
+          // console.log('some',doc.data().tailor);
+          navigation.navigate('HomeStack');
+
+        }
+        else{
+          navigation.navigate('Gallery');
+          
+        }
+      });
+      // console.log('present user at the monet',q)
+      // console.log('a ref for tailor',tailorRef);
+      // console.log(' for tailor',tailor);
+      // navigation.navigate('HomeStack');
+    } catch (error: any) {
+      console.log(error.message);
+      setFirebaseErr(error.message);
+    }
+
+    // console.log(data);
+    // navigation.navigate('HomeStack')
+  };
+
   const data = [
     { value: 'Apple', key: 1 },
     { value: 'Samsung', key: 2 },
@@ -35,17 +106,36 @@ const Login = ({ navigation }: any) => {
         <Text style={styles.subHeading}>Fill in the Information.</Text>
       </View>
       <View style={styles.input}>
-        <InputField label="Email:" placeholder="example@gmail.com" />
-        <PasswordField label="Password:" placeholder="xxxxxxxxxx" password />
+        <FieldInput
+          label="Email:"
+          placeholder="example@gmail.com"
+          control={control}
+          name={'email'}
+          secureTextEntry={false}
+        />
+        {errors.email && (
+          <NativeUIText textColor="red">email is requuired</NativeUIText>
+        )}
+        <FieldInput
+          label="Password:"
+          placeholder="******"
+          control={control}
+          name={'password'}
+          secureTextEntry={true}
+        />
+        {errors.password && (
+          <NativeUIText textColor="red">password is requuired</NativeUIText>
+        )}
+        {/* <PasswordField label="Password:" placeholder="xxxxxxxxxx" password /> */}
       </View>
 
-      <TouchableOpacity
-        activeOpacity={0.8}
-        onPress={() => navigation.navigate('HomeStack')}
+      <View
+        // activeOpacity={0.8}
+        // onPress={() => navigation.navigate('HomeStack')}
         style={styles.create}
       >
-        <BlueButton text="Login" />
-      </TouchableOpacity>
+        <BlueButton text="Login" onClickButton={handleSubmit(onSubmit)} />
+      </View>
       {/* <View style={styles.orSection}>
         <View style={styles.line}></View>
         <Text>or</Text>
@@ -59,7 +149,6 @@ const Login = ({ navigation }: any) => {
         />
         <Text style={styles.text}>Sign In with Google</Text>
       </View> */}
-
     </SafeAreaView>
   );
 };

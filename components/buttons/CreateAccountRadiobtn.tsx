@@ -1,8 +1,11 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
-const CreateAccountRadiobtn = () => {
+interface Props {
+  setUserRole: React.Dispatch<React.SetStateAction<string>>;
+}
 
+const CreateAccountRadiobtn = ({ setUserRole }: Props) => {
   const [checked, setChecked] = useState(0);
   const category = ['Tailor', 'Client'];
 
@@ -13,7 +16,7 @@ const CreateAccountRadiobtn = () => {
           return (
             <View style={styles.spacing} key={category}>
               {checked == key ? (
-                <TouchableOpacity style={styles.btn}>
+                <TouchableOpacity  style={styles.btn}>
                   <Image
                     style={styles.img}
                     source={require('./radio-checked.png')}
@@ -24,8 +27,10 @@ const CreateAccountRadiobtn = () => {
                 <TouchableOpacity
                   onPress={() => {
                     setChecked(key);
+                    setUserRole(category);
                   }}
-                  style={styles.btn}>
+                  style={styles.btn}
+                >
                   <Image
                     style={styles.img}
                     source={require('./radio-unchecked.png')}
@@ -45,7 +50,6 @@ const CreateAccountRadiobtn = () => {
 const styles = StyleSheet.create({
   radio: {
     flexDirection: 'row',
-    
   },
   img: {
     height: 20,
@@ -57,12 +61,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginHorizontal: 15,
-    marginTop: 8
+    marginTop: 8,
   },
   spacing: {
     justifyContent: 'space-between',
-    
-  }
+  },
 });
 
 export default CreateAccountRadiobtn;

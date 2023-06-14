@@ -13,8 +13,73 @@ import BlueButton from '../components/buttons/BlueButton';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../utils/colors';
 import CreateAccountRadiobtn from '../components/buttons/CreateAccountRadiobtn';
+import { useForm, Controller } from 'react-hook-form';
+import FieldInput from '../components/inputFields/FieldInput';
+import NativeUIText from '../components/NativeUIText/NativeUIText';
+import { auth, db } from '../firebase-config';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { getDoc, collection, addDoc } from 'firebase/firestore';
 
 const CreateAccount = ({ navigation }: any) => {
+  const [userRole, setUserRole] = useState('Tailor');
+  const [firebaseErr, setFirebaseErr] = useState('');
+  const [warning, setWarning] = useState({
+    password: '',
+    confirmPassword: '',
+  });
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
+  console.log(userRole);
+
+  const onSubmit = async (data: any) => {
+    if (data.password !== data.confirmPassword) {
+      return setWarning({ ...warning, password: 'Passwords do not match' });
+    }
+
+    if (userRole === 'Tailor') {
+      try {
+        const tailor = await createUserWithEmailAndPassword(
+          auth,
+          data.email,
+          data.password
+        );
+
+        console.log(tailor);
+
+        navigation.navigate('Set Profile');
+      } catch (error: any) {
+        console.log(error.message);
+        setFirebaseErr(error.message);
+      }
+    }
+    if (userRole === 'Client') {
+      try {
+        const customer = await createUserWithEmailAndPassword(
+          auth,
+          data.email,
+          data.password
+        );
+
+        console.log(customer);
+
+        navigation.navigate('Gallery');
+      } catch (error: any) {
+        console.log(error.message);
+        setFirebaseErr(error.message);
+      }
+    }
+    
+  };
   const data = [
     { value: 'Apple', key: 1 },
     { value: 'Samsung', key: 2 },
@@ -37,20 +102,49 @@ const CreateAccount = ({ navigation }: any) => {
         </Text>
       </View>
       <View style={styles.input}>
-        <InputField label="Email:" placeholder="example@gmail.com" />
-        <PasswordField label="Password:" placeholder="xxxxxxxxxx" password />
-        <PasswordField
-          label="Confirm Password:"
-          placeholder="xxxxxxxxxx"
-          password
+        <FieldInput
+          label="Email:"
+          placeholder="example@gmail.com"
+          control={control}
+          name={'email'}
+          secureTextEntry={false}
         />
+        {errors.email && (
+          <NativeUIText textColor="red">email is requuired</NativeUIText>
+        )}
+        {firebaseErr && (
+          <NativeUIText textColor="red">{firebaseErr}</NativeUIText>
+        )}
+        <FieldInput
+          label="Password:"
+          placeholder="******"
+          control={control}
+          name={'password'}
+          secureTextEntry={true}
+        />
+        {errors.password && (
+          <NativeUIText textColor="red">password is required</NativeUIText>
+        )}
+        {warning.password && (
+          <NativeUIText textColor="red">{warning.confirmPassword}</NativeUIText>
+        )}
+        <FieldInput
+          label="Confirm Password:"
+          placeholder="******"
+          control={control}
+          name={'confirmPassword'}
+          secureTextEntry={true}
+        />
+        {errors.password && (
+          <NativeUIText textColor="red">password is requuired</NativeUIText>
+        )}
       </View>
 
       <View style={{ flexDirection: 'row', marginTop: 15 }}>
         <Text style={{ fontWeight: 'bold', marginTop: 15 }}>
           Signing In as:
         </Text>
-        <CreateAccountRadiobtn />
+        <CreateAccountRadiobtn setUserRole={setUserRole} />
       </View>
 
       <TouchableOpacity
@@ -58,7 +152,10 @@ const CreateAccount = ({ navigation }: any) => {
         onPress={() => navigation.navigate('Set Profile')}
         style={styles.create}
       >
-        <BlueButton text="Create an Account" />
+        <BlueButton
+          text="Create an Account"
+          onClickButton={handleSubmit(onSubmit)}
+        />
       </TouchableOpacity>
       <View style={styles.orSection}>
         <View style={styles.line}></View>

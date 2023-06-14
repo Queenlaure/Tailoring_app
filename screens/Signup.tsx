@@ -24,20 +24,22 @@ const Signup = ({ navigation }: any) => {
         <Text style={styles.text}>
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() =>
-              navigation.navigate('Create Account', { name: 'CreateAccount' })
-            }
           >
             <View>
-              <BlueButton text="Sign Up" />
+              <BlueButton
+                text="Sign Up"
+                onClickButton={() =>
+                  navigation.navigate('Create Account', {
+                    name: 'CreateAccount',
+                  })
+                }
+              />
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() =>
-              navigation.navigate('Login', { name: 'Login' })
-            }
+            onPress={() => navigation.navigate('Login', { name: 'Login' })}
           >
             <OutlineButton text="Log In" />
           </TouchableOpacity>

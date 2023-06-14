@@ -4,8 +4,34 @@ import { COLORS } from '../utils/colors';
 import GreyInputField from '../components/inputFields/GreyInputField';
 import { Ionicons } from '@expo/vector-icons';
 import BlueButton from '../components/buttons/BlueButton';
+import { useForm, Controller } from 'react-hook-form';
+import CustomGreyInput from '../components/inputFields/CustomGreyInput';
+import NativeUIText from '../components/NativeUIText/NativeUIText';
 
 const AddCustomer = ({ navigation }: any) => {
+
+  const [userRole, setUserRole] = useState('');
+  
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      name: '',
+      number: '',
+      email: '',
+      address: '',
+    },
+  });
+
+  console.log(userRole);
+
+  const onSubmit = (data: any) => {
+    console.log(data);
+    navigation.navigate('HomeStack');
+  };
+
   const [checked, setChecked] = useState(0);
   const category = ['Male', 'Female'];
   return (
@@ -14,7 +40,7 @@ const AddCustomer = ({ navigation }: any) => {
         flex: 1,
         backgroundColor: COLORS.white,
         paddingHorizontal: 30,
-        paddingTop: 55,
+        paddingTop: 45,
       }}
     >
       <View style={{ alignItems: 'center' }}>
@@ -22,10 +48,50 @@ const AddCustomer = ({ navigation }: any) => {
           <Text style={styles.heading}>Enter Customer Details</Text>
         </View>
         <View>
-          <GreyInputField label="Name" placeholder="name" />
+        <CustomGreyInput
+          label="Name:"
+          placeholder="name"
+          control={control}
+          name={'name'}
+          secureTextEntry={false}
+        />
+        {errors.name && (
+          <NativeUIText textColor="red">name is requuired</NativeUIText>
+        )}
+        <CustomGreyInput
+          label="Number:"
+          placeholder="nunber"
+          control={control}
+          name={'number'}
+          secureTextEntry={false}
+        />
+        {errors.number && (
+          <NativeUIText textColor="red">number is requuired</NativeUIText>
+        )}
+        {/* <CustomGreyInput
+          label="Email:"
+          placeholder="example@gmail.com"
+          control={control}
+          name={'email'}
+          secureTextEntry={false}
+        /> */}
+        {/* {errors.email && (
+          <NativeUIText textColor="red">email is requuired</NativeUIText>
+        )} */}
+        <CustomGreyInput
+          label="Address:"
+          placeholder="address"
+          control={control}
+          name={'address'}
+          secureTextEntry={false}
+        />
+        {errors.address && (
+          <NativeUIText textColor="red">address is requuired</NativeUIText>
+        )}
+          {/* <GreyInputField label="Name" placeholder="name" />
           <GreyInputField label="Number" placeholder="number" />
           <GreyInputField label="Email (Optional)" placeholder="email" />
-          <GreyInputField label="Address (Optional)" placeholder="address" />
+          <GreyInputField label="Address (Optional)" placeholder="address" /> */}
         </View>
         <View style={{ flexDirection: 'row', paddingVertical: 15 }}>
           <Text style={{ fontWeight: 'bold', marginTop: 5 }}>
@@ -46,6 +112,7 @@ const AddCustomer = ({ navigation }: any) => {
                   <TouchableOpacity
                     onPress={() => {
                       setChecked(key);
+                      setUserRole(category);
                     }}
                     style={styles.btn}
                   >
@@ -69,11 +136,13 @@ const AddCustomer = ({ navigation }: any) => {
             <Ionicons name={'camera'} size={50} color={COLORS.grey} />
           </Text>
         </View>
-        <TouchableOpacity style={{ alignItems: 'center', marginTop: 20 }} activeOpacity={0.8}
-        onPress={() => navigation.navigate('HomeStack')}>
-          <BlueButton text="Save" />
-        </TouchableOpacity>
       </View>
+      <TouchableOpacity
+        style={{ alignItems: 'center', marginTop: 20 }}
+        activeOpacity={0.8}
+      >
+        <BlueButton text="Save" onClickButton={handleSubmit(onSubmit)} />
+      </TouchableOpacity>
     </View>
   );
 };

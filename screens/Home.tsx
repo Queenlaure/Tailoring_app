@@ -103,7 +103,11 @@ const Home = ({ navigation }: any) => {
                 </Text>
               </View>
             </TouchableOpacity>
-            <View style={styles.viewCustomers}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => navigation.navigate('ViewCustomers')}
+              style={styles.viewCustomers}
+            >
               <View
                 style={{
                   alignItems: 'center',
@@ -122,7 +126,7 @@ const Home = ({ navigation }: any) => {
                   View Customers
                 </Text>
               </View>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
       </View>

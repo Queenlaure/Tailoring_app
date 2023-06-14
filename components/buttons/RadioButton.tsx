@@ -1,7 +1,11 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 
-const Radio = () => {
+interface Props {
+  setUserRole: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const Radio = ({ setUserRole }: Props) => {
 
   const [checked, setChecked] = useState(0);
   const category = ['Male', 'Female', 'Both'];
@@ -24,6 +28,7 @@ const Radio = () => {
                 <TouchableOpacity
                   onPress={() => {
                     setChecked(key);
+                    setUserRole(category);
                   }}
                   style={styles.btn}>
                   <Image

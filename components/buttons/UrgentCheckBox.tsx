@@ -3,24 +3,24 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { COLORS } from '../../utils/colors';
 import { Ionicons } from '@expo/vector-icons';
 
-function MyCheckbox() {
+function MyCheckbox({setUrgent}:{setUrgent: React.Dispatch<React.SetStateAction<boolean>>}) {
     const [checked, setChecked] = useState(false);
     return (
       <Pressable
         style={[styles.checkboxBase, checked && styles.checkboxChecked]}
-        onPress={() => setChecked(!checked)}>
+        onPress={() => {setChecked(!checked); setUrgent(true)}}>
         {checked && <Ionicons name="checkmark" size={15} color="white" />}
       </Pressable>
     );
   }
 
-const UrgentCheckBox = () => {
+const UrgentCheckBox = ({setUrgent}:{setUrgent: React.Dispatch<React.SetStateAction<boolean>>}) => {
 
 
    return (
     <View style={styles.appContainer}>
       <View style={styles.checkboxContainer}>
-        <MyCheckbox />
+        <MyCheckbox setUrgent= {setUrgent}/>
         <Text style={styles.checkboxLabel}>Mark as Urgent</Text>
       </View>
     </View>

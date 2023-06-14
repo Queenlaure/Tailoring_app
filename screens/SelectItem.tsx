@@ -58,7 +58,7 @@ const SelectItem = ({ navigation}: Props) => {
           height: 50,
           justifyContent: 'center',
           alignItems: 'center',
-          marginTop: 25,
+          marginTop: 15,
           flexDirection: 'row',
           borderRadius:10
           

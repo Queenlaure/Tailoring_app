@@ -68,7 +68,7 @@ const HomeStack = () => {
         // options={{ headerShown: false }}
       />
       <BottomTab.Screen name={OrdersName} component={Orders} options={{ headerShown: false }} />
-      <BottomTab.Screen name={GalleryName} component={Gallery} setImages={setImages} options={{ headerShown: false }} />
+      <BottomTab.Screen name={GalleryName} component={Gallery}  options={{ headerShown: false }} />
     </BottomTab.Navigator>
   );
 };
