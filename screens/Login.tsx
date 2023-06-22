@@ -39,44 +39,49 @@ const Login = ({ navigation }: any) => {
     },
   });
 
-  // console.log(auth);
+
 
   const onSubmit = async (data: any) => {
+    console.log(data.email);
+    
     try {
-      const tailor = await signInWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password
-      );
-
-      const tailorRef = collection(db, 'tailor');
-      onAuthStateChanged(auth, (currentUser: any) => {
-        setUserEmail(currentUser.email);
-      });
-
-      console.log(userEmail);
-
-      // Create a query against the collection.
-      const q = query(tailorRef, where('email', '==', userEmail));
-      setPresentUser(q);
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, ' => ', doc.data());
-        if (doc.data().tailor){
-          // console.log('some',doc.data().tailor);
-          navigation.navigate('HomeStack');
-
-        }
-        else{
-          navigation.navigate('Gallery');
-          
-        }
-      });
-      // console.log('present user at the monet',q)
-      // console.log('a ref for tailor',tailorRef);
-      // console.log(' for tailor',tailor);
-      // navigation.navigate('HomeStack');
+      if(data.email){
+        const tailor = await signInWithEmailAndPassword(
+          auth,
+          data.email,
+          data.password
+        );
+  
+        const tailorRef = collection(db, 'tailor');
+        onAuthStateChanged(auth, (currentUser: any) => {
+          setUserEmail(currentUser.email);
+        });
+  
+        console.log(userEmail);
+  
+        // Create a query against the collection.
+        const q = query(tailorRef, where('email', '==', userEmail));
+        setPresentUser(q);
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, ' => ', doc.data());
+          if (doc.data().tailor){
+            // console.log('some',doc.data().tailor);
+            navigation.navigate('HomeStack');
+  
+          }
+          else{
+            navigation.navigate('Gallery');
+            
+          }
+        });
+        // console.log('present user at the monet',q)
+        // console.log('a ref for tailor',tailorRef);
+        // console.log(' for tailor',tailor);
+        // navigation.navigate('HomeStack');
+      }
+     
     } catch (error: any) {
       console.log(error.message);
       setFirebaseErr(error.message);

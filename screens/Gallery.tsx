@@ -34,7 +34,7 @@ const Gallery = ({ navigation }: any) => {
   const show = () => setVisible(true);
   const hide = () => setVisible(false);
 
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState<any>([]);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -170,7 +170,7 @@ const Gallery = ({ navigation }: any) => {
 
             <View style={styles.images}>
               <ScrollView horizontal={true} keyboardShouldPersistTaps="handled">
-                {images?.map((image: any, index) => {
+                {images?.map((image: any, index:any) => {
                   return (
                     <Pressable
                       style={{

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, Dimensions, TouchableOpacity, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import { COLORS } from '../utils/colors';
 import MainHeading from '../components/headings/MainHeading';
@@ -10,6 +10,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useForm, Controller } from 'react-hook-form';
 import CustomGreyInput from '../components/inputFields/CustomGreyInput';
 import NativeUIText from '../components/NativeUIText/NativeUIText';
+import * as ImagePicker from 'expo-image-picker';
+
+const width = Dimensions.get('screen').width / 2 - 30;
 
 interface Props {
   userOption?: any;
@@ -21,6 +24,8 @@ const Suit = ({ route, userOption, navigation }: Props) => {
   const { selectedUserOption } = route.params;
 
   const [urgent, setUrgent] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [images, setImages] = useState<any>([]);
 
   if (urgent) {
     console.log(urgent);
@@ -53,6 +58,26 @@ const Suit = ({ route, userOption, navigation }: Props) => {
     navigation.navigate('HomeStack');
   };
 
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: false,
+      allowsMultipleSelection: true,
+      aspect: [4, 3],
+      quality: 1,
+      // selectionLimit: 5,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImages(result.assets);
+      setVisible(true);
+      console.log(result.assets);
+    }
+  };
+
   return (
     <View
       style={{
@@ -60,11 +85,12 @@ const Suit = ({ route, userOption, navigation }: Props) => {
         backgroundColor: COLORS.white,
         // paddingHorizontal: 30,
         paddingTop: 35,
+        paddingBottom: 70,
         alignItems: 'center',
       }}
     >
       <MainHeading title="John Davie" userOption={selectedUserOption} />
-      <View style={{ height: 580 }}>
+      <View >
         <ScrollView showsVerticalScrollIndicator={false}>
           <CustomGreyInput
             label="Neck:"
@@ -145,7 +171,9 @@ const Suit = ({ route, userOption, navigation }: Props) => {
             secureTextEntry={false}
           />
           {errors.crutchDepth && (
-            <NativeUIText textColor="red">crutch depth is required</NativeUIText>
+            <NativeUIText textColor="red">
+              crutch depth is required
+            </NativeUIText>
           )}
           <CustomGreyInput
             label="Back Width:"
@@ -176,7 +204,7 @@ const Suit = ({ route, userOption, navigation }: Props) => {
           )}
           <CustomGreyInput
             label="Charge (FCFA):"
-            placeholder='0000'
+            placeholder="0000"
             control={control}
             name={'charge'}
             secureTextEntry={false}
@@ -184,32 +212,64 @@ const Suit = ({ route, userOption, navigation }: Props) => {
           {errors.charge && (
             <NativeUIText textColor="red">charge is required</NativeUIText>
           )}
-       
+
           <View>
             <UrgentCheckBox setUrgent={setUrgent} />
           </View>
           <View style={styles.picSection}>
-            <View>
-              <Text style={{ fontWeight: 'bold', fontSize: 14 }}>
-                Add Cloth Image
-              </Text>
-              <View style={styles.cameraContainer}>
-                <Text>
-                  <Ionicons name={'camera'} size={50} color={COLORS.grey} />
-                </Text>
-              </View>
+            <View  style={styles.addButton} >
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={pickImage}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Ionicons
+                  name={'add-circle-outline'}
+                  size={40}
+                  color={COLORS.dark}
+                />
+                <Text>Add Cloth Image</Text>
+              </TouchableOpacity>
             </View>
-            <View style={{ width: 130, height: 130 }}>
-              <Image
-                source={require('../assets/tailor2.jpg')}
-                style={styles.pic}
-              />
+            <View>
+              <ScrollView
+                horizontal={true}
+                style={styles.secondSection}
+                keyboardShouldPersistTaps="handled"
+              >
+                {images?.map((image: any, index: any) => {
+                  return (
+                    <Pressable
+                      style={{
+                        height: 130,
+                        width: Dimensions.get('window').width / 4 - 30,
+                        margin: 5,
+                      }}
+                      key={index}
+                      onPress={() => console.log(image.uri)}
+                    >
+                      <Image
+                        source={{ uri: image.uri }}
+                        style={{
+                          height: 130,
+                          width: Dimensions.get('window').width / 4 - 30,
+                        }}
+                      />
+                    </Pressable>
+                  );
+                })}
+              </ScrollView>
             </View>
           </View>
+          <View style={{ marginTop: 30 }}>
+            <BlueButton text="Save" onClickButton={handleSubmit(onSubmit)} />
+          </View>
         </ScrollView>
-      </View>
-      <View style={{ marginTop: 30 }}>
-        <BlueButton text="Save" onClickButton={handleSubmit(onSubmit)} />
       </View>
     </View>
   );
@@ -218,22 +278,33 @@ const Suit = ({ route, userOption, navigation }: Props) => {
 export default Suit;
 
 const styles = StyleSheet.create({
-  cameraContainer: {
-    width: 130,
-    height: 130,
-    backgroundColor: COLORS.lightGrey,
-    marginTop: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  // cameraContainer: {
+  //   width: 130,
+  //   height: 130,
+  //   backgroundColor: COLORS.lightGrey,
+  //   marginTop: 10,
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  // },
   picSection: {
     marginTop: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    
+  },
+  addButton: {
+    alignItems: 'flex-start',
   },
   pic: {
     width: '100%',
     height: '100%',
     marginTop: 30,
+  },
+  firstSection: {
+    marginRight: 10,
+  },
+  secondSection: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    width: 320,
   },
 });

@@ -43,11 +43,12 @@ const styles = StyleSheet.create({
     width: 350,
     height: 45,
     borderRadius: 10,
-    borderColor: COLORS.dark,
+    borderColor: COLORS.darkGrey,
     borderBottomWidth: 1,
     borderTopWidth: 1,
     borderLeftWidth: 1,
     borderRightWidth: 1,
+    marginBottom: 15
   },
 
   label: {
