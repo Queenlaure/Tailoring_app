@@ -13,9 +13,12 @@ import { COLORS } from '../../utils/colors';
 
 interface Props {
   label?: string;
+  onChange?: () => void;
+  searchText?: string;
+  setSearchText: (value: any) => void;
 }
 
-const Search = ({ label }: Props) => {
+const Search = ({ label, onChange, searchText, setSearchText }: Props) => {
   return (
     <View>
       <Text style={styles.label}>{label}</Text>
@@ -26,9 +29,14 @@ const Search = ({ label }: Props) => {
           style={{ marginHorizontal: 10 }}
           color={COLORS.lightGrey}
         />
-        <TextInput placeholder="Search Customer" style={styles.input} />
+        <TextInput
+          placeholder="Search Customer"
+          style={styles.input}
+          value={searchText}
+          onChangeText={(value) => setSearchText(value)}
+        />
       </View>
-      <Text style={styles.searchBtn}>search</Text>
+      {/* <Text style={styles.searchBtn}>search</Text> */}
     </View>
   );
 };

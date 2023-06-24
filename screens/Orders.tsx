@@ -46,32 +46,47 @@ const Orders = () => {
       }}
     >
       <CategoryList />
-      <View style={{paddingHorizontal: 30}}>
-      <View style={style.searchContainer}>
-        <MaterialIcons
-          name="search"
-          size={25}
-          style={{ marginHorizontal: 10 }}
-          color={COLORS.lightGrey}
-        />
-        <TextInput placeholder="Search Orders" style={style.input} />
+      <View style={{ alignItems: 'center' }}>
+        <View style={style.searchContainer}>
+          <MaterialIcons
+            name="search"
+            size={25}
+            style={{ marginHorizontal: 10 }}
+            color={COLORS.lightGrey}
+          />
+          <TextInput placeholder="Search Orders" style={style.input} />
+        </View>
       </View>
-      </View>
-      
 
-      <View style={{width:'100%', height:1, backgroundColor: COLORS.lightGrey, marginTop:20}}></View>
+      <View
+        style={{
+          width: '100%',
+          height: 1,
+          backgroundColor: COLORS.lightGrey,
+          marginTop: 20,
+        }}
+      ></View>
 
       <View style={style.cardSection}>
         <View style={{ width: 170, height: 110 }}>
           <Image source={require('../assets/tailor1.jpg')} style={style.pic} />
         </View>
-        <View style={{justifyContent: 'center', paddingHorizontal:5}}>
-          <Text style={{fontSize: 16, fontWeight:'bold'}}>Wernt Faith</Text>
-          <Text style={{fontSize: 13}}>5000frs (1 item)</Text>
-          <Text style={{fontSize: 13, color: COLORS.lightBrown}}>Due on August 30 2023</Text>
+        <View style={{ justifyContent: 'center', paddingHorizontal: 5 }}>
+          <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Wernt Faith</Text>
+          <Text style={{ fontSize: 13 }}>5000frs (1 item)</Text>
+          <Text style={{ fontSize: 13, color: COLORS.lightBrown }}>
+            Due on August 30 2023
+          </Text>
         </View>
       </View>
-      <View style={{width:'100%', height:1, backgroundColor: COLORS.lightGrey, marginTop:20}}></View>
+      <View
+        style={{
+          width: '100%',
+          height: 1,
+          backgroundColor: COLORS.lightGrey,
+          marginTop: 20,
+        }}
+      ></View>
     </View>
   );
 };
@@ -97,12 +112,11 @@ const style = StyleSheet.create({
   },
   searchContainer: {
     height: 50,
-    width: 350,
+    width: '90%',
     backgroundColor: COLORS.light,
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    
   },
   input: {
     fontSize: 14,
@@ -119,7 +133,7 @@ const style = StyleSheet.create({
   pic: {
     width: '100%',
     height: '100%',
-    borderRadius: 7
+    borderRadius: 7,
   },
 });
 

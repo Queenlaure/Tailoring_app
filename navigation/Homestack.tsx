@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Home from '../screens/Home';
@@ -36,7 +36,11 @@ const HomeStack = () => {
           }
 
           // You can return any component that you like here!
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return (
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+              <Ionicons name={iconName} size={size} color={color} />
+            </View>
+          );
         },
         tabBarActiveTintColor: COLORS.blue,
         tabBarInactiveTintColor: 'gray',
@@ -44,12 +48,14 @@ const HomeStack = () => {
           height: 60,
           paddingBottom: 10,
           paddingTop: 10,
-          width: 300,
           borderRadius: 20,
           position: 'absolute',
           marginBottom: 30,
-          marginLeft: 55
-          
+          left: 30,
+          right: 30,
+          // marginHorizontal: 'auto',
+          // marginLeft: 'auto',
+          // marginRight: 'auto',
         },
       })}
 
@@ -67,8 +73,16 @@ const HomeStack = () => {
 
         // options={{ headerShown: false }}
       />
-      <BottomTab.Screen name={OrdersName} component={Orders} options={{ headerShown: false }} />
-      <BottomTab.Screen name={GalleryName} component={Gallery}  options={{ headerShown: false }} />
+      <BottomTab.Screen
+        name={OrdersName}
+        component={Orders}
+        options={{ headerShown: false }}
+      />
+      <BottomTab.Screen
+        name={GalleryName}
+        component={Gallery}
+        options={{ headerShown: false }}
+      />
     </BottomTab.Navigator>
   );
 };

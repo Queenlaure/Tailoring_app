@@ -13,10 +13,15 @@ import Radio from '../components/buttons/RadioButton';
 import { COLORS } from '../utils/colors';
 import { Ionicons } from '@expo/vector-icons';
 import BlueButton from '../components/buttons/BlueButton';
+import { RootState } from '../store';
+import { useSelector } from 'react-redux';
 
 const width = Dimensions.get('screen').width / 2 - 30;
 
 const Home = ({ navigation }: any) => {
+  const tailorSlice = useSelector((state: RootState) => state.tailor);
+  // console.log('taikor home  silice', tailorSlice);
+
   return (
     <View
       style={{
@@ -41,8 +46,10 @@ const Home = ({ navigation }: any) => {
           />
         </View>
         <View style={{ marginLeft: 10, marginTop: 10 }}>
-          <Text style={{ fontWeight: 'bold' }}>Precious</Text>
-          <Text>Molyko</Text>
+          <Text style={{ fontWeight: 'bold' }}>
+            {tailorSlice.user.shopName}
+          </Text>
+          <Text>{tailorSlice.user.address}</Text>
         </View>
       </View>
       <View>
@@ -155,7 +162,7 @@ const styles = StyleSheet.create({
   },
   img2Container: {
     width: '100%',
-    height: '50%',
+    height: '48%',
   },
   addCustomer: {
     backgroundColor: COLORS.purple,

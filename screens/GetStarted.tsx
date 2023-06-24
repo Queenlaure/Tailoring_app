@@ -18,9 +18,11 @@ import {
 } from '@expo-google-fonts/raleway';
 
 const GetStarted = ({ navigation }: any) => {
+  // const { customer } = route.params;
+
   let [fontsLoaded, error] = useFonts({
     Raleway_400Regular,
-    'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
+    Poppins: require('../assets/fonts/Poppins-Regular.ttf'),
   });
   if (!fontsLoaded) {
     return <AppLoading />;
@@ -38,11 +40,16 @@ const GetStarted = ({ navigation }: any) => {
         available tailors in your community.
       </Text>
       <View
-        // activeOpacity={0.8}
-        // onPress={() => navigation.navigate('Sign Up', { name: 'Signup' })}
+      // activeOpacity={0.8}
+      // onPress={() => navigation.navigate('Sign Up', { name: 'Signup' })}
       >
         <View style={styles.bluebtn}>
-          <BlueButton text="Get Started" onClickButton={() => navigation.navigate('Sign Up', { name: 'Signup' })} />
+          <BlueButton
+            text="Get Started"
+            onClickButton={() =>
+              navigation.navigate('Sign Up', { name: 'Signup' })
+            }
+          />
         </View>
       </View>
     </SafeAreaView>
@@ -57,7 +64,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 40,
     backgroundColor: COLORS.white,
-    fontFamily:'Poppins'
+    fontFamily: 'Poppins',
   },
   img1: {
     width: '100%',

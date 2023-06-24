@@ -20,6 +20,11 @@ import { useForm, Controller } from 'react-hook-form';
 import CustomGreyInput from '../components/inputFields/CustomGreyInput';
 import NativeUIText from '../components/NativeUIText/NativeUIText';
 import * as ImagePicker from 'expo-image-picker';
+import { db, auth, storage } from '../firebase-config';
+import { getDoc, collection, addDoc, updateDoc, doc } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
 const width = Dimensions.get('screen').width / 2 - 30;
 
@@ -30,7 +35,9 @@ interface Props {
 }
 
 const Gown = ({ route, userOption, navigation }: Props) => {
-  const { selectedUserOption } = route.params;
+  const { selectedUserOption, customer } = route.params;
+
+  const tailorSlice = useSelector((state: RootState) => state.tailor);
 
   const [urgent, setUrgent] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -42,6 +49,7 @@ const Gown = ({ route, userOption, navigation }: Props) => {
 
   const {
     control,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm({
@@ -61,9 +69,88 @@ const Gown = ({ route, userOption, navigation }: Props) => {
     },
   });
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-    navigation.navigate('HomeStack');
+  const onSubmit = async (data: any) => {
+    // console.log('hello');
+    const ordersCollectionRef = collection(db, 'orders');
+
+    try {
+      const blob: any = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function (e) {
+          console.log(e);
+          reject(new TypeError('Network request failed'));
+        };
+        xhr.responseType = 'blob';
+        xhr.open('GET', images[0]?.uri, true);
+        xhr.send(null);
+      });
+
+      await addDoc(ordersCollectionRef, {
+        gown: {
+          gownLength: data.gownLength,
+          upperChest: data.upperChest,
+          chest: data.chest,
+          waist: data.waist,
+          stomach: data.stomach,
+          hips: data.hips,
+          shoulder: data.shoulder,
+          frontNeckDepth: data.frontNeckDepth,
+          sleeveLength: data.sleeveLength,
+          sleevesRound: data.sleevesRound,
+          armHoles: data.armHoles,
+          charge: data.charge,
+        },
+        customerName: customer,
+        tailorEmail: tailorSlice.user.email,
+        urgent: urgent,
+      }).then((response) => {
+        console.log(response.id);
+        const imageRef = ref(storage, `orders/${response.id}`);
+        const metadata = {
+          contentType: 'image/jpg',
+        };
+
+        uploadBytes(imageRef, blob, metadata)
+          .then(async (snapshot) => {
+            const downloadURL = await getDownloadURL(imageRef);
+            console.log(downloadURL);
+            const imageDoc = doc(db, 'orders', response.id);
+
+            await updateDoc(imageDoc, {
+              imageUrl: downloadURL,
+            });
+            blob.close();
+          })
+          .then(navigation.navigate('HomeStack'));
+        setNewCreatedID(response.id);
+      });
+
+      // navigation.navigate('HomeStack');
+    } catch (err: any) {
+      console.log(err.message);
+    }
+    // setLoading(false);
+    // dispatch(stopButtonLoading());
+    reset({
+      gownLength: '',
+      upperChest: '',
+      chest: '',
+      waist: '',
+      stomach: '',
+      hips: '',
+      shoulder: '',
+      frontNeckDepth: '',
+      sleeveLength: '',
+      sleevesRound: '',
+      armHoles: '',
+      charge: '',
+    });
+
+    // setLoading(!loading);
+    // dispatch(stopButtonLoading());
   };
 
   const pickImage = async () => {
@@ -98,7 +185,10 @@ const Gown = ({ route, userOption, navigation }: Props) => {
         justifyContent: 'center',
       }}
     >
-      <MainHeading title="John Davie" userOption={selectedUserOption} />
+      <View style={{ marginTop: 30 }}>
+        <MainHeading title={customer} userOption={selectedUserOption} />
+      </View>
+
       <View>
         <ScrollView showsVerticalScrollIndicator={false}>
           <CustomGreyInput
@@ -217,7 +307,7 @@ const Gown = ({ route, userOption, navigation }: Props) => {
             <UrgentCheckBox setUrgent={setUrgent} />
           </View>
           <View style={styles.picSection}>
-            <View  style={styles.addButton} >
+            <View style={styles.addButton}>
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={pickImage}
@@ -289,7 +379,6 @@ const styles = StyleSheet.create({
   // },
   picSection: {
     marginTop: 10,
-    
   },
   addButton: {
     alignItems: 'flex-start',
@@ -309,3 +398,6 @@ const styles = StyleSheet.create({
     width: 320,
   },
 });
+function setNewCreatedID(id: string) {
+  throw new Error('Function not implemented.');
+}

@@ -21,8 +21,18 @@ import { auth, db } from '../firebase-config';
 
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store';
+import { TailorInfo } from '../store/tailor/tailorSlice';
 
 const Login = ({ navigation }: any) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const tailorSlice = useSelector((state: RootState) => state.tailor);
+
+  // console.log('taikor silice', tailorSlice);
+
+  // console.log(tailorSlice);
+
   const [firebaseErr, setFirebaseErr] = useState('');
   const [presentUser, setPresentUser] = useState({});
   const [userEmail, setUserEmail] = useState('');
@@ -39,26 +49,24 @@ const Login = ({ navigation }: any) => {
     },
   });
 
-
-
   const onSubmit = async (data: any) => {
     console.log(data.email);
-    
+
     try {
-      if(data.email){
+      if (data.email) {
         const tailor = await signInWithEmailAndPassword(
           auth,
           data.email,
           data.password
         );
-  
+
         const tailorRef = collection(db, 'tailor');
         onAuthStateChanged(auth, (currentUser: any) => {
           setUserEmail(currentUser.email);
         });
-  
+
         console.log(userEmail);
-  
+
         // Create a query against the collection.
         const q = query(tailorRef, where('email', '==', userEmail));
         setPresentUser(q);
@@ -66,14 +74,12 @@ const Login = ({ navigation }: any) => {
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
           console.log(doc.id, ' => ', doc.data());
-          if (doc.data().tailor){
+          if (doc.data().tailor) {
+            dispatch(TailorInfo(doc.data()));
             // console.log('some',doc.data().tailor);
             navigation.navigate('HomeStack');
-  
-          }
-          else{
+          } else {
             navigation.navigate('Gallery');
-            
           }
         });
         // console.log('present user at the monet',q)
@@ -81,7 +87,6 @@ const Login = ({ navigation }: any) => {
         // console.log(' for tailor',tailor);
         // navigation.navigate('HomeStack');
       }
-     
     } catch (error: any) {
       console.log(error.message);
       setFirebaseErr(error.message);
