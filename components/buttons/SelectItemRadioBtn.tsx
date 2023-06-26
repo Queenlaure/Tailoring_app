@@ -17,18 +17,21 @@ interface Props {
   setUserOption?: any;
 }
 
-const SelectItemRadioBtn = ({ data, onSelect, userOption, setUserOption }: Props) => {
-
+const SelectItemRadioBtn = ({
+  data,
+  onSelect,
+  userOption,
+  setUserOption,
+}: Props) => {
   return (
-    <View style={{marginTop:30}}>
-      {data.map((item: any, index:number) => {
+    <View style={{ marginTop: 10 }}>
+      {data.map((item: any, index: number) => {
         return (
           <Pressable
-          key={index}
+            key={index}
             style={
               item.value === userOption ? styles.selected : styles.unselected
             }
-            
             onPress={() => setUserOption(item.value)}
           >
             <Text style={styles.option}> {item.value}</Text>
@@ -42,14 +45,13 @@ const SelectItemRadioBtn = ({ data, onSelect, userOption, setUserOption }: Props
 const styles = StyleSheet.create({
   option: {
     fontSize: 16,
-
   },
   unselected: {
     backgroundColor: COLORS.white,
     margin: 10,
     width: 340,
     height: 48,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   selected: {
     backgroundColor: COLORS.blue,

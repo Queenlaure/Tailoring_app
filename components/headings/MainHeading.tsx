@@ -1,17 +1,18 @@
-import { View, Text , StyleSheet} from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import React from 'react';
 import { COLORS } from '../../utils/colors';
 
 interface Props {
-    title?: string;
+  title?: string;
   userOption?: any;
 }
 
-const MainHeading = ({title, userOption}: Props) => {
-    
+const MainHeading = ({ title, userOption }: Props) => {
   return (
     <View>
-      <Text style={styles.heading}>{title} ({userOption})</Text>
+      <Text style={styles.heading}>
+        {title} ({userOption})
+      </Text>
     </View>
   );
 };

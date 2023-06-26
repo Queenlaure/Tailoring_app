@@ -20,17 +20,20 @@ import NativeUIText from '../components/NativeUIText/NativeUIText';
 import { db, auth, storage } from '../firebase-config';
 import { getDoc, collection, addDoc, updateDoc, doc } from 'firebase/firestore';
 import * as ImagePicker from 'expo-image-picker';
-import firebase from 'firebase/compat/app';
 import {
   getDownloadURL,
   ref,
   uploadBytes,
   uploadBytesResumable,
 } from 'firebase/storage';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
 const width = Dimensions.get('screen').width / 2 - 30;
 
 const AddCustomer = ({ navigation }: any) => {
+  const tailorSlice = useSelector((state: RootState) => state.tailor);
+
   const [userRole, setUserRole] = useState('');
   const [visible, setVisible] = useState(false);
   const [images, setImages] = useState<any>([]);
@@ -56,7 +59,7 @@ const AddCustomer = ({ navigation }: any) => {
 
   const onSubmit = async (data: any) => {
     console.log('hello');
-    const studentCollectionRef = collection(db, 'clients');
+    const studentCollectionRef = collection(db, 'customers');
 
     try {
       const blob: any = await new Promise((resolve, reject) => {
@@ -78,9 +81,11 @@ const AddCustomer = ({ navigation }: any) => {
         number: data.number,
         category: userRole,
         address: data.address,
+        tailorEmail: tailorSlice.user.email,
+        tailorName: tailorSlice.user.shopName,
       }).then((response) => {
         console.log(response.id);
-        const imageRef = ref(storage, `clients/${response.id}`);
+        const imageRef = ref(storage, `customers/${response.id}`);
         const metadata = {
           contentType: 'image/jpg',
         };
@@ -89,7 +94,7 @@ const AddCustomer = ({ navigation }: any) => {
           .then(async (snapshot) => {
             const downloadURL = await getDownloadURL(imageRef);
             console.log(downloadURL);
-            const imageDoc = doc(db, 'clients', response.id);
+            const imageDoc = doc(db, 'customers', response.id);
 
             await updateDoc(imageDoc, {
               imageUrl: downloadURL,
@@ -100,7 +105,7 @@ const AddCustomer = ({ navigation }: any) => {
         setNewCreatedID(response.id);
       });
 
-      console.log(newCreatedID);
+      // console.log(newCreatedID);
 
       // navigation.navigate('HomeStack');
     } catch (err: any) {
@@ -149,7 +154,7 @@ const AddCustomer = ({ navigation }: any) => {
         flex: 1,
         backgroundColor: COLORS.white,
         paddingHorizontal: 30,
-        paddingTop: 45,
+        paddingTop: 55,
       }}
     >
       <View style={{ alignItems: 'center' }}>
@@ -287,8 +292,9 @@ const AddCustomer = ({ navigation }: any) => {
           })}
         </ScrollView>
       </View>
-
-      <BlueButton text="Save" onClickButton={handleSubmit(onSubmit)} />
+      <View style={{ alignItems: 'center', marginTop: 10 }}>
+        <BlueButton text="Save" onClickButton={handleSubmit(onSubmit)} />
+      </View>
     </View>
   );
 };

@@ -1,17 +1,18 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import SelectItemRadioBtn from '../components/buttons/SelectItemRadioBtn';
 import { COLORS } from '../utils/colors';
 import { Entypo } from '@expo/vector-icons';
 
 interface Props {
-
   navigation?: any;
+  route?: any;
 }
 
-const SelectItem = ({ navigation}: Props) => {
+const SelectItem = ({ navigation, route }: Props) => {
+  const { customer } = route.params;
 
-  const [userOption, setUserOption] = useState(''); 
+  const [userOption, setUserOption] = useState('');
 
   const data = [
     { value: 'Shirt', id: 1 },
@@ -33,9 +34,12 @@ const SelectItem = ({ navigation}: Props) => {
 
   const handleNextPress = () => {
     if (userOption) {
-      navigation.navigate(userOption, {selectedUserOption:userOption});
+      navigation.navigate(userOption, {
+        selectedUserOption: userOption,
+        customer: customer,
+      });
     } else {
-      navigation.navigate('Get Started');
+      navigation.navigate('Get Started', { customer: customer });
     }
   };
 
@@ -45,12 +49,18 @@ const SelectItem = ({ navigation}: Props) => {
         flex: 1,
         backgroundColor: COLORS.lightestGrey,
         paddingHorizontal: 30,
-        paddingTop: 55,
+        paddingTop: 65,
         alignItems: 'center',
       }}
     >
       <Text style={styles.heading}>Select Item</Text>
-      <SelectItemRadioBtn setUserOption={setUserOption} userOption={userOption} data={data}  />
+
+      <SelectItemRadioBtn
+        setUserOption={setUserOption}
+        userOption={userOption}
+        data={data}
+      />
+
       <TouchableOpacity
         style={{
           backgroundColor: COLORS.blue,
@@ -60,13 +70,13 @@ const SelectItem = ({ navigation}: Props) => {
           alignItems: 'center',
           marginTop: 15,
           flexDirection: 'row',
-          borderRadius:10
-          
+          borderRadius: 10,
         }}
-        
         onPress={handleNextPress}
       >
-        <Text style={{ color: COLORS.white, fontSize: 18, fontWeight: 'bold' }}>Next</Text>
+        <Text style={{ color: COLORS.white, fontSize: 18, fontWeight: 'bold' }}>
+          Next
+        </Text>
         <Entypo name="controller-next" size={26} color={COLORS.white} />
       </TouchableOpacity>
     </View>

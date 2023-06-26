@@ -1,4 +1,13 @@
-import { View, Text, StyleSheet, ScrollView, Image, Dimensions, TouchableOpacity, Pressable } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+  Pressable,
+} from 'react-native';
 import React, { useState } from 'react';
 import { COLORS } from '../utils/colors';
 import MainHeading from '../components/headings/MainHeading';
@@ -11,6 +20,11 @@ import { useForm, Controller } from 'react-hook-form';
 import CustomGreyInput from '../components/inputFields/CustomGreyInput';
 import NativeUIText from '../components/NativeUIText/NativeUIText';
 import * as ImagePicker from 'expo-image-picker';
+import { db, auth, storage } from '../firebase-config';
+import { getDoc, collection, addDoc, updateDoc, doc } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
 const width = Dimensions.get('screen').width / 2 - 30;
 
@@ -21,7 +35,9 @@ interface Props {
 }
 
 const Pants = ({ route, userOption, navigation }: Props) => {
-  const { selectedUserOption } = route.params;
+  const { selectedUserOption, customer } = route.params;
+
+  const tailorSlice = useSelector((state: RootState) => state.tailor);
 
   const [urgent, setUrgent] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -33,6 +49,7 @@ const Pants = ({ route, userOption, navigation }: Props) => {
 
   const {
     control,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm({
@@ -52,9 +69,89 @@ const Pants = ({ route, userOption, navigation }: Props) => {
     },
   });
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-    navigation.navigate('HomeStack');
+  const onSubmit = async (data: any) => {
+    // console.log('hello');
+    const ordersCollectionRef = collection(db, 'orders');
+
+    try {
+      const blob: any = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function (e) {
+          console.log(e);
+          reject(new TypeError('Network request failed'));
+        };
+        xhr.responseType = 'blob';
+        xhr.open('GET', images[0]?.uri, true);
+        xhr.send(null);
+      });
+
+      await addDoc(ordersCollectionRef, {
+        pants: {
+          waist: data.waist,
+          outseam: data.outseam,
+          inseam: data.inseam,
+          frontRise: data.frontRise,
+          backRise: data.backRise,
+          hips: data.hips,
+          thigh: data.thigh,
+          knee: data.knee,
+          sura: data.sura,
+          legOpening: data.legOpening,
+          length: data.length,
+          charge: data.charge,
+        },
+        tailorEmail: tailorSlice.user.email,
+        charge: data.charge,
+        urgent: urgent,
+        customerName: customer,
+      }).then((response) => {
+        console.log(response.id);
+        const imageRef = ref(storage, `orders/${response.id}`);
+        const metadata = {
+          contentType: 'image/jpg',
+        };
+
+        uploadBytes(imageRef, blob, metadata)
+          .then(async (snapshot) => {
+            const downloadURL = await getDownloadURL(imageRef);
+            console.log(downloadURL);
+            const imageDoc = doc(db, 'orders', response.id);
+
+            await updateDoc(imageDoc, {
+              imageUrl: downloadURL,
+            });
+            blob.close();
+          })
+          .then(navigation.navigate('HomeStack'));
+        setNewCreatedID(response.id);
+      });
+
+      // navigation.navigate('HomeStack');
+    } catch (err: any) {
+      console.log(err.message);
+    }
+    // setLoading(false);
+    // dispatch(stopButtonLoading());
+    reset({
+      waist: '',
+      outseam: '',
+      inseam: '',
+      frontRise: '',
+      backRise: '',
+      hips: '',
+      thigh: '',
+      knee: '',
+      sura: '',
+      legOpening: '',
+      length: '',
+      charge: '',
+    });
+
+    // setLoading(!loading);
+    // dispatch(stopButtonLoading());
   };
 
   const pickImage = async () => {
@@ -62,7 +159,7 @@ const Pants = ({ route, userOption, navigation }: Props) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: false,
-      allowsMultipleSelection: true,
+      allowsMultipleSelection: false,
       aspect: [4, 3],
       quality: 1,
       // selectionLimit: 5,
@@ -88,8 +185,8 @@ const Pants = ({ route, userOption, navigation }: Props) => {
         alignItems: 'center',
       }}
     >
-      <MainHeading title="John Davie" userOption={selectedUserOption} />
-      <View >
+      <MainHeading title={customer} userOption={selectedUserOption} />
+      <View>
         <ScrollView showsVerticalScrollIndicator={false}>
           <CustomGreyInput
             label="Waist:"
@@ -204,7 +301,7 @@ const Pants = ({ route, userOption, navigation }: Props) => {
             <UrgentCheckBox setUrgent={setUrgent} />
           </View>
           <View style={styles.picSection}>
-            <View  style={styles.addButton} >
+            <View style={styles.addButton}>
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={pickImage}
@@ -275,7 +372,6 @@ const styles = StyleSheet.create({
   // },
   picSection: {
     marginTop: 10,
-    
   },
   addButton: {
     alignItems: 'flex-start',
@@ -295,3 +391,6 @@ const styles = StyleSheet.create({
     width: 320,
   },
 });
+function setNewCreatedID(id: string) {
+  throw new Error('Function not implemented.');
+}
