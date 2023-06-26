@@ -38,6 +38,8 @@ const ViewCustomers = ({ navigation }: any) => {
     (state: RootState) => state.customer.customers
   );
 
+  // console.log(filteredData);
+
   const clients = [
     { gender: 'male', name: 'John' },
     { gender: 'female', name: 'Queen' },
@@ -115,7 +117,7 @@ const ViewCustomers = ({ navigation }: any) => {
                 activeOpacity={0.8}
                 onPress={() =>
                   navigation.navigate('CustomerDetails', {
-                    customer: customer.name,
+                    customer: customer,
                   })
                 }
                 style={styles.card}

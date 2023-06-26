@@ -26,6 +26,7 @@ import Blouse from './screens/Blouse';
 import ImageFolderDetails from './screens/ImageFolderDetails';
 import ViewCustomers from './screens/ViewCustomer';
 import CustomerDetails from './screens/CustomerDetails';
+import SpecificOrderDetail from './screens/SpecificOrderDetail';
 import HomeStack from './navigation/Homestack';
 import Provider from 'react-redux';
 import { store } from './store';
@@ -158,6 +159,11 @@ export default function Appwrapper() {
           <Stack.Screen
             name="ViewCustomers"
             component={ViewCustomers}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="SpecificOrderDetail"
+            component={SpecificOrderDetail}
             options={{ headerShown: false }}
           />
 
