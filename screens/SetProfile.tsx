@@ -7,15 +7,25 @@ import BlueButton from '../components/buttons/BlueButton';
 import { useForm, Controller } from 'react-hook-form';
 import FieldInput from '../components/inputFields/FieldInput';
 import NativeUIText from '../components/NativeUIText/NativeUIText';
-import { db ,auth} from '../firebase-config';
-import { getDoc, collection, addDoc } from 'firebase/firestore';
-import { onAuthStateChanged } from "firebase/auth";
+import { db, auth } from '../firebase-config';
+import {
+  getDoc,
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+} from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+import { TailorInfo } from '../store/tailor/tailorSlice';
+import { useDispatch } from 'react-redux';
 
 const SetProfile = ({ navigation }: any) => {
   const [userRole, setUserRole] = useState('Male');
-  const [userID,setUserID]=useState('');
+  const [userID, setUserID] = useState('');
+  const dispatch = useDispatch();
 
-  onAuthStateChanged(auth, (currentUser:any) => {
+  onAuthStateChanged(auth, (currentUser: any) => {
     setUserID(currentUser.email);
   });
   const {
@@ -42,15 +52,25 @@ const SetProfile = ({ navigation }: any) => {
         contact: data.contact,
         specialty: userRole,
         tailor: true,
-        
       });
-      console.log(tailorCollectionRef);
-      navigation.navigate('HomeStack');
+      // Create a query against the collection.
+      const q = query(tailorCollectionRef, where('email', '==', userID));
+      //  setPresentUser(q);
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, ' => ', doc.data());
+        if (doc.data().tailor) {
+          dispatch(TailorInfo(doc.data()));
+          // console.log('some',doc.data().tailor);
+          navigation.navigate('HomeStack');
+        }
+      });
+      // console.log(tailorCollectionRef);
     } catch (error: any) {
       console.log(error.message);
     }
     // console.log(data);
-
   };
   return (
     <View style={{ flex: 1, paddingTop: 70, backgroundColor: COLORS.white }}>

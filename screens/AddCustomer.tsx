@@ -260,7 +260,7 @@ const AddCustomer = ({ navigation }: any) => {
               size={40}
               color={COLORS.dark}
             />
-            <Text>Add Photo (optional)</Text>
+            <Text>Add Photo</Text>
           </TouchableOpacity>
         </View>
 

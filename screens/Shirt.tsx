@@ -41,6 +41,7 @@ const Shirt = ({ route, userOption, navigation }: Props) => {
   const tailorSlice = useSelector((state: RootState) => state.tailor);
 
   const [urgent, setUrgent] = useState(false);
+  const [completed, setCompleted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [images, setImages] = useState<any>([]);
 
@@ -102,6 +103,7 @@ const Shirt = ({ route, userOption, navigation }: Props) => {
         },
         tailorEmail: tailorSlice.user.email,
         urgent: urgent,
+        completed: completed,
         customerName: customer,
       }).then((response) => {
         console.log(response.id);

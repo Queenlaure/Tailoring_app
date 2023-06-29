@@ -40,6 +40,7 @@ const Agbada = ({ route, userOption, navigation }: Props) => {
   const tailorSlice = useSelector((state: RootState) => state.tailor);
 
   const [urgent, setUrgent] = useState(false);
+  const [completed, setCompleted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [images, setImages] = useState<any>([]);
 
@@ -125,6 +126,7 @@ const Agbada = ({ route, userOption, navigation }: Props) => {
         },
         tailorEmail: tailorSlice.user.email,
         customerName: customer,
+        completed: completed,
         urgent: urgent,
       }).then((response) => {
         console.log(response.id);

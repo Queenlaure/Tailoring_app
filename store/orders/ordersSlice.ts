@@ -11,6 +11,7 @@ interface Shirt {
   cuffCircumference: string;
   collarSize: string;
   charge: string;
+  // imageUrl: string;
 }
 interface Gown {
   gownLength: string;
@@ -25,6 +26,7 @@ interface Gown {
   sleevesRound: string;
   armHoles: string;
   charge: string;
+  // imageUrl: string;
 }
 interface Agbada {
   neck: string;
@@ -39,6 +41,7 @@ interface Agbada {
   bicep: string;
   wrist: string;
   charge: string;
+  // imageUrl: string;
 }
 interface Pants {
   waist: string;
@@ -53,6 +56,7 @@ interface Pants {
   legOpening: string;
   length: string;
   charge: string;
+  // imageUrl: string;
 }
 interface Jumpsuit {
   shoulders: string;
@@ -64,6 +68,7 @@ interface Jumpsuit {
   inseam: string;
   cuff: string;
   charge: string;
+  // imageUrl: string;
 }
 interface Suit {
   neck: string;
@@ -79,6 +84,7 @@ interface Suit {
   bicep: string;
   wrist: string;
   charge: string;
+  // imageUrl: string;
 }
 interface Jacket {
   shoulder: string;
@@ -87,6 +93,7 @@ interface Jacket {
   waist: string;
   centerBack: string;
   charge: string;
+  // imageUrl: string;
 }
 interface Blouse {
   backLength: string;
@@ -103,13 +110,16 @@ interface Blouse {
   sleeveRound: string;
   armRound: string;
   charge: string;
+  // imageUrl: string;
 }
 
 export interface OrdersType {
   customerName: string;
-  imageUrl: string;
   tailorEmail?: string;
   urgent?: boolean;
+  completed?: boolean;
+  imageUrl: string;
+  id: string;
   shirt?: Shirt;
   gown?: Gown;
   agbada?: Agbada;

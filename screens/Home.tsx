@@ -20,7 +20,7 @@ const width = Dimensions.get('screen').width / 2 - 30;
 
 const Home = ({ navigation }: any) => {
   const tailorSlice = useSelector((state: RootState) => state.tailor);
-  // console.log('taikor home  silice', tailorSlice);
+  console.log('taikor home  silice', tailorSlice);
 
   return (
     <View
@@ -28,7 +28,7 @@ const Home = ({ navigation }: any) => {
         flex: 1,
         backgroundColor: COLORS.white,
         paddingHorizontal: 20,
-        marginTop: 25,
+        paddingTop: 35,
       }}
     >
       <View
