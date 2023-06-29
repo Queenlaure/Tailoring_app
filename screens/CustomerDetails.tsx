@@ -46,7 +46,7 @@ const CustomerDetails = ({ navigation, route }: Props) => {
         );
 
         const querySnapshot = await getDocs(q);
-        console.log(querySnapshot);
+        // console.log(querySnapshot);
 
         setOrders(
           querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
@@ -66,10 +66,11 @@ const CustomerDetails = ({ navigation, route }: Props) => {
       }
     };
 
-    console.log('Helloooooo there ', ordersSlice);
+    // console.log('Helloooooo there ', ordersSlice);
 
     getOrders();
-  }, []);
+    // console.log(customer);
+  }, [orders]);
 
   return (
     <View
@@ -100,6 +101,7 @@ const CustomerDetails = ({ navigation, route }: Props) => {
                 gown: order.gown,
                 pants: order.pants,
                 agbada: order.agbada,
+                imageUrl: order.imageUrl,
               })
             }
           >

@@ -5,14 +5,47 @@ import {
   StyleSheet,
   TextInput,
   Image,
+  ScrollView,
 } from 'react-native';
 import { COLORS } from '../utils/colors';
-import React from 'react';
-import { MaterialIcons } from '@expo/vector-icons';
+import React, { useState, useEffect } from 'react';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  doc,
+  updateDoc,
+} from 'firebase/firestore';
+import { db } from '../firebase-config';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../store';
+import { CustomerType, customersInfo } from '../store/customer/customerSlice';
+import { OrdersType, ordersInfo } from '../store/orders/ordersSlice';
+import Search from '../components/inputFields/Search';
 
-const Orders = () => {
-  const categories = ['RECENT', 'URGENT', 'COMPLETED'];
+const Orders = ({ navigation }: any) => {
+  const categories = ['ALL', 'URGENT', 'COMPLETED'];
   const [catergoryIndex, setCategoryIndex] = React.useState(0);
+  const [searchText, setSearchText] = useState('');
+  // const [completed, setCompleted] = useState(false);
+  const [filteredData, setFilteredData] = useState<OrdersType[]>(
+    [] as OrdersType[]
+  );
+
+  const UpdateToCompleted = (id: string) => {
+    const docRef = doc(db, 'orders', id);
+    return updateDoc(docRef, { completed: true })
+      .then((docRef) => {
+        console.log(
+          'A New Document Field has been added to an existing document'
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const CategoryList = () => {
     return (
@@ -37,24 +70,88 @@ const Orders = () => {
     );
   };
 
+  const dispatch = useDispatch();
+
+  // const [searchText, setSearchText] = useState('');
+  // const [filteredData, setFilteredData] = useState<CustomerType[]>(
+  //   [] as CustomerType[]
+  // );
+  const [orders, setOrders] = useState<any>([]);
+
+  const tailorSlice = useSelector((state: RootState) => state.tailor);
+  const ordersSlice = useSelector((state: RootState) => state.orders);
+
+  // console.log('queens', filteredData);
+  // console.log('queens', customers);
+
+  useEffect(() => {
+    const getOrders = async () => {
+      try {
+        // Create a query against the collection.
+        const ordersRef = collection(db, 'orders');
+        const q = query(
+          ordersRef,
+          // where('tailorEmail', '==', tailorSlice.user.email)
+          where('tailorEmail', '==', tailorSlice.user.email)
+        );
+
+        const querySnapshot = await getDocs(q);
+        // console.log(querySnapshot);
+
+        setOrders(
+          querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        );
+
+        dispatch(ordersInfo(orders));
+        // console.log('queens', customers);
+
+        // querySnapshot.docs.forEach((doc) => {
+        //   dispatch(customersInfo([doc.data()]));
+        //   // doc.data() is never undefined for query doc snapshots
+        //   console.log(doc.id, ' => cc ', doc.data());
+        // });
+      } catch (error: any) {
+        console.log(error.message);
+        // setFirebaseErr(error.message);
+      }
+    };
+
+    // console.log('Helloooooo there ', ordersSlice);
+
+    getOrders();
+  }, [orders]);
+
+  const handleFilter = (valueText: any) => {
+    setSearchText(valueText);
+    const newFilter: OrdersType[] = ordersSlice?.orders.filter((value) => {
+      return value.customerName
+        ?.toLowerCase()
+        .includes(searchText.toLowerCase());
+    });
+
+    if (searchText === '') {
+      setFilteredData([]);
+    } else {
+      setFilteredData(newFilter);
+    }
+  };
+
+  // if (completed) {
+  //   console.log(completed);
+  // }
+
   return (
     <View
       style={{
         flex: 1,
         backgroundColor: COLORS.white,
-        paddingTop: 20,
+        paddingTop: 65,
       }}
     >
       <CategoryList />
       <View style={{ alignItems: 'center' }}>
-        <View style={style.searchContainer}>
-          <MaterialIcons
-            name="search"
-            size={25}
-            style={{ marginHorizontal: 10 }}
-            color={COLORS.lightGrey}
-          />
-          <TextInput placeholder="Search Orders" style={style.input} />
+        <View>
+          <Search setSearchText={handleFilter} searchText={searchText} />
         </View>
       </View>
 
@@ -67,26 +164,372 @@ const Orders = () => {
         }}
       ></View>
 
-      <View style={style.cardSection}>
-        <View style={{ width: 170, height: 110 }}>
-          <Image source={require('../assets/tailor1.jpg')} style={style.pic} />
-        </View>
-        <View style={{ justifyContent: 'center', paddingHorizontal: 5 }}>
-          <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Wernt Faith</Text>
-          <Text style={{ fontSize: 13 }}>5000frs (1 item)</Text>
-          <Text style={{ fontSize: 13, color: COLORS.lightBrown }}>
-            Due on August 30 2023
-          </Text>
-        </View>
-      </View>
-      <View
-        style={{
-          width: '100%',
-          height: 1,
-          backgroundColor: COLORS.lightGrey,
-          marginTop: 20,
-        }}
-      ></View>
+      {searchText ? (
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {filteredData.map((order: OrdersType, index: any) => (
+            <View>
+              <TouchableOpacity
+                key={index}
+                activeOpacity={0.8}
+                onPress={() =>
+                  navigation.navigate('SpecificOrderDetail', {
+                    shirt: order.shirt,
+                    jacket: order.jacket,
+                    blouse: order.blouse,
+                    jumpsuit: order.jumpsuit,
+                    suit: order.suit,
+                    gown: order.gown,
+                    pants: order.pants,
+                    agbada: order.agbada,
+                    imageUrl: order.imageUrl,
+                  })
+                }
+                style={style.cardSection}
+              >
+                <View style={{ width: 150, height: 110 }}>
+                  <Image
+                    source={{
+                      uri: order.imageUrl,
+                    }}
+                    style={style.pic}
+                  />
+                </View>
+                <View
+                  style={{ justifyContent: 'center', paddingHorizontal: 5 }}
+                >
+                  <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+                    {order.customerName}
+                  </Text>
+                  <Text style={{ fontSize: 13 }}>
+                    {order.agbada?.charge ||
+                      order.blouse?.charge ||
+                      order.gown?.charge ||
+                      order.jacket?.charge ||
+                      order.jumpsuit?.charge ||
+                      order.pants?.charge ||
+                      order.shirt?.charge ||
+                      order.suit?.charge}
+                    frs (1 item)
+                  </Text>
+                  <Text style={{ fontSize: 13, color: COLORS.lightBrown }}>
+                    Due: 30/08/2023
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => {
+                    UpdateToCompleted(order.id);
+                  }}
+                  style={{
+                    justifyContent: 'flex-end',
+                  }}
+                >
+                  <MaterialIcons name="archive" size={24} color="grey" />
+                </TouchableOpacity>
+              </TouchableOpacity>
+
+              <View
+                style={{
+                  width: '100%',
+                  height: 1,
+                  backgroundColor: COLORS.lightGrey,
+                  marginTop: 20,
+                }}
+              ></View>
+            </View>
+          ))}
+        </ScrollView>
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {ordersSlice.orders.map((order: OrdersType, index: any) => (
+            <View>
+              {catergoryIndex === 0 && order.completed === false ? (
+                <View>
+                  <TouchableOpacity
+                    key={index}
+                    activeOpacity={0.8}
+                    onPress={() =>
+                      navigation.navigate('SpecificOrderDetail', {
+                        shirt: order.shirt,
+                        jacket: order.jacket,
+                        blouse: order.blouse,
+                        jumpsuit: order.jumpsuit,
+                        suit: order.suit,
+                        gown: order.gown,
+                        pants: order.pants,
+                        agbada: order.agbada,
+                        imageUrl: order.imageUrl,
+                      })
+                    }
+                    style={style.cardSection}
+                  >
+                    <View style={{ width: 150, height: 110 }}>
+                      <Image
+                        source={{
+                          uri: order.imageUrl,
+                        }}
+                        style={style.pic}
+                      />
+                    </View>
+                    <View
+                      style={{ justifyContent: 'center', paddingHorizontal: 5 }}
+                    >
+                      <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+                        {order.customerName}
+                      </Text>
+                      <Text style={{ fontSize: 13 }}>
+                        {order.agbada?.charge ||
+                          order.blouse?.charge ||
+                          order.gown?.charge ||
+                          order.jacket?.charge ||
+                          order.jumpsuit?.charge ||
+                          order.pants?.charge ||
+                          order.shirt?.charge ||
+                          order.suit?.charge}
+                        frs (1 item)
+                      </Text>
+                      <Text style={{ fontSize: 13 }}>
+                        {order.shirt
+                          ? 'Shirt'
+                          : order.gown
+                          ? 'Gown'
+                          : order.agbada
+                          ? 'Agbada'
+                          : order.blouse
+                          ? 'Blouse'
+                          : order.jacket
+                          ? 'Jacket'
+                          : order.jumpsuit
+                          ? 'Jumpsuit'
+                          : order.pants
+                          ? 'Pants'
+                          : order.suit
+                          ? 'Suit'
+                          : ''}
+                      </Text>
+                      <Text style={{ fontSize: 13, color: COLORS.lightBrown }}>
+                        Due: 30/08/2023
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      activeOpacity={0.8}
+                      onPress={() => {
+                        UpdateToCompleted(order.id);
+                      }}
+                      style={{
+                        justifyContent: 'flex-end',
+                      }}
+                    >
+                      <MaterialIcons name="archive" size={24} color="grey" />
+                    </TouchableOpacity>
+                  </TouchableOpacity>
+
+                  {catergoryIndex === 0 && order.completed === false ? (
+                    <View
+                      style={{
+                        width: '100%',
+                        height: 1,
+                        backgroundColor: COLORS.lightGrey,
+                        marginTop: 20,
+                      }}
+                    ></View>
+                  ) : (
+                    ''
+                  )}
+                </View>
+              ) : catergoryIndex === 1 &&
+                order.urgent === true &&
+                order.completed === false ? (
+                <View>
+                  <TouchableOpacity
+                    key={index}
+                    activeOpacity={0.8}
+                    onPress={() =>
+                      navigation.navigate('SpecificOrderDetail', {
+                        shirt: order.shirt,
+                        jacket: order.jacket,
+                        blouse: order.blouse,
+                        jumpsuit: order.jumpsuit,
+                        suit: order.suit,
+                        gown: order.gown,
+                        pants: order.pants,
+                        agbada: order.agbada,
+                        imageUrl: order.imageUrl,
+                      })
+                    }
+                    style={style.cardSection}
+                  >
+                    <View style={{ width: 150, height: 110 }}>
+                      <Image
+                        source={{
+                          uri: order.imageUrl,
+                        }}
+                        style={style.pic}
+                      />
+                    </View>
+                    <View
+                      style={{ justifyContent: 'center', paddingHorizontal: 5 }}
+                    >
+                      <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+                        {order.customerName}
+                      </Text>
+                      <Text style={{ fontSize: 13 }}>
+                        {order.agbada?.charge ||
+                          order.blouse?.charge ||
+                          order.gown?.charge ||
+                          order.jacket?.charge ||
+                          order.jumpsuit?.charge ||
+                          order.pants?.charge ||
+                          order.shirt?.charge ||
+                          order.suit?.charge}
+                        frs (1 item)
+                      </Text>
+                      <Text style={{ fontSize: 13 }}>
+                        {order.shirt
+                          ? 'Shirt'
+                          : order.gown
+                          ? 'Gown'
+                          : order.agbada
+                          ? 'Agbada'
+                          : order.blouse
+                          ? 'Blouse'
+                          : order.jacket
+                          ? 'Jacket'
+                          : order.jumpsuit
+                          ? 'Jumpsuit'
+                          : order.pants
+                          ? 'Pants'
+                          : order.suit
+                          ? 'Suit'
+                          : ''}
+                      </Text>
+                      <Text style={{ fontSize: 13, color: COLORS.lightBrown }}>
+                        Due: 30/08/2023
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      activeOpacity={0.8}
+                      onPress={() => {
+                        UpdateToCompleted(order.id);
+                      }}
+                      style={{
+                        justifyContent: 'flex-end',
+                      }}
+                    >
+                      <MaterialIcons name="archive" size={24} color="grey" />
+                    </TouchableOpacity>
+                  </TouchableOpacity>
+                  {catergoryIndex === 1 && order.urgent === true ? (
+                    <View
+                      style={{
+                        width: '100%',
+                        height: 1,
+                        backgroundColor: COLORS.lightGrey,
+                        marginTop: 20,
+                      }}
+                    ></View>
+                  ) : (
+                    ''
+                  )}
+                </View>
+              ) : catergoryIndex === 2 && order.completed ? (
+                <View>
+                  <TouchableOpacity
+                    key={index}
+                    activeOpacity={0.8}
+                    onPress={() =>
+                      navigation.navigate('SpecificOrderDetail', {
+                        shirt: order.shirt,
+                        jacket: order.jacket,
+                        blouse: order.blouse,
+                        jumpsuit: order.jumpsuit,
+                        suit: order.suit,
+                        gown: order.gown,
+                        pants: order.pants,
+                        agbada: order.agbada,
+                        imageUrl: order.imageUrl,
+                      })
+                    }
+                    style={style.cardSection}
+                  >
+                    <View style={{ width: 150, height: 110 }}>
+                      <Image
+                        source={{
+                          uri: order.imageUrl,
+                        }}
+                        style={style.pic}
+                      />
+                    </View>
+                    <View
+                      style={{ justifyContent: 'center', paddingHorizontal: 5 }}
+                    >
+                      <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+                        {order.customerName}
+                      </Text>
+                      <Text style={{ fontSize: 13 }}>
+                        {order.agbada?.charge ||
+                          order.blouse?.charge ||
+                          order.gown?.charge ||
+                          order.jacket?.charge ||
+                          order.jumpsuit?.charge ||
+                          order.pants?.charge ||
+                          order.shirt?.charge ||
+                          order.suit?.charge}
+                        frs (1 item)
+                      </Text>
+                      <Text style={{ fontSize: 13 }}>
+                        {order.shirt
+                          ? 'Shirt'
+                          : order.gown
+                          ? 'Gown'
+                          : order.agbada
+                          ? 'Agbada'
+                          : order.blouse
+                          ? 'Blouse'
+                          : order.jacket
+                          ? 'Jacket'
+                          : order.jumpsuit
+                          ? 'Jumpsuit'
+                          : order.pants
+                          ? 'Pants'
+                          : order.suit
+                          ? 'Suit'
+                          : ''}
+                      </Text>
+                      <Text style={{ fontSize: 13, color: COLORS.lightBrown }}>
+                        Due: 30/08/2023
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  {catergoryIndex === 2 && order.completed ? (
+                    <View
+                      style={{
+                        width: '100%',
+                        height: 1,
+                        backgroundColor: COLORS.lightGrey,
+                        marginTop: 20,
+                      }}
+                    ></View>
+                  ) : (
+                    ''
+                  )}
+                </View>
+              ) : (
+                ''
+              )}
+
+              {/* <View
+                style={{
+                  width: '100%',
+                  height: 1,
+                  backgroundColor: COLORS.lightGrey,
+                  marginTop: 20,
+                }}
+              ></View> */}
+            </View>
+          ))}
+        </ScrollView>
+      )}
     </View>
   );
 };
@@ -94,8 +537,8 @@ const Orders = () => {
 const style = StyleSheet.create({
   categoryContainer: {
     flexDirection: 'row',
-    marginTop: 30,
-    marginBottom: 25,
+    marginTop: 10,
+    // marginBottom: 25,
     paddingHorizontal: 30,
     justifyContent: 'space-between',
   },

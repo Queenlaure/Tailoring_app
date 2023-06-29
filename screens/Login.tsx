@@ -60,6 +60,8 @@ const Login = ({ navigation }: any) => {
           data.password
         );
 
+        console.log('ssasdw', tailor);
+
         const tailorRef = collection(db, 'tailor');
         onAuthStateChanged(auth, (currentUser: any) => {
           setUserEmail(currentUser.email);

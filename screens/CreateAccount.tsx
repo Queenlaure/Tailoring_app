@@ -54,7 +54,7 @@ const CreateAccount = ({ navigation }: any) => {
           data.password
         );
 
-        // console.log(tailor);
+        console.log(tailor);
 
         navigation.navigate('Set Profile');
       } catch (error: any) {

@@ -150,46 +150,55 @@ const ViewCustomers = ({ navigation }: any) => {
             ))}
           </View>
         ) : (
-          <View
-            style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}
+          <ScrollView
+            style={{ height: '75%', width: '100%', marginTop: 15 }}
+            showsVerticalScrollIndicator={false}
           >
-            {customersSlice.map((customer, index) => (
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() =>
-                  navigation.navigate('CustomerDetails', {
-                    customer: customer.name,
-                  })
-                }
-                style={styles.card}
-                key={index}
-              >
-                <View
-                  style={{
-                    height: 115,
-                    alignItems: 'center',
-                  }}
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+              }}
+            >
+              {customersSlice.map((customer, index) => (
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() =>
+                    navigation.navigate('CustomerDetails', {
+                      customer: customer.name,
+                    })
+                  }
+                  style={styles.card}
+                  key={index}
                 >
-                  {customer.category === 'male' ? (
-                    <Ionicons
-                      name={'man'}
-                      size={40}
-                      color={COLORS.thickPurple}
-                      style={styles.icon}
-                    />
-                  ) : (
-                    <Ionicons
-                      name={'woman'}
-                      size={40}
-                      color={COLORS.thickBlue}
-                      style={styles.icon}
-                    />
-                  )}
-                </View>
-                <Text style={styles.name}>{customer.name}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+                  <View
+                    style={{
+                      height: 115,
+                      alignItems: 'center',
+                    }}
+                  >
+                    {customer.category === 'male' ? (
+                      <Ionicons
+                        name={'man'}
+                        size={40}
+                        color={COLORS.thickPurple}
+                        style={styles.icon}
+                      />
+                    ) : (
+                      <Ionicons
+                        name={'woman'}
+                        size={40}
+                        color={COLORS.thickBlue}
+                        style={styles.icon}
+                      />
+                    )}
+                  </View>
+                  <Text style={styles.name}>{customer.name}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
         )}
       </View>
     </View>

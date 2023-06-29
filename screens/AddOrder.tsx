@@ -109,31 +109,39 @@ const AddOrder = ({ navigation }: any) => {
           <View>
             {filteredData.map((customer, index) => {
               return (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.clientName}
-                  activeOpacity={0.8}
-                  onPress={() =>
-                    navigation.navigate('SelectItem', {
-                      customer: customer.name,
-                    })
-                  }
+                <ScrollView
+                  style={{ height: '60%', width: '100%', marginTop: 15 }}
+                  showsVerticalScrollIndicator={false}
                 >
-                  <Text
-                    style={{
-                      marginLeft: 10,
-                      color: COLORS.darkGrey,
-                      fontSize: 15,
-                    }}
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.clientName}
+                    activeOpacity={0.8}
+                    onPress={() =>
+                      navigation.navigate('SelectItem', {
+                        customer: customer.name,
+                      })
+                    }
                   >
-                    {customer.name}
-                  </Text>
-                </TouchableOpacity>
+                    <Text
+                      style={{
+                        marginLeft: 10,
+                        color: COLORS.darkGrey,
+                        fontSize: 15,
+                      }}
+                    >
+                      {customer.name}
+                    </Text>
+                  </TouchableOpacity>
+                </ScrollView>
               );
             })}
           </View>
         ) : (
-          <View>
+          <ScrollView
+            style={{ height: '60%', width: '100%', marginTop: 15 }}
+            showsVerticalScrollIndicator={false}
+          >
             {customersSlice.map((customer, index) => {
               return (
                 <TouchableOpacity
@@ -157,7 +165,7 @@ const AddOrder = ({ navigation }: any) => {
                 </TouchableOpacity>
               );
             })}
-          </View>
+          </ScrollView>
         )}
       </View>
     </View>
@@ -189,7 +197,7 @@ const styles = StyleSheet.create({
   },
   clientName: {
     backgroundColor: COLORS.white,
-    width: 350,
+    width: 300,
     height: 45,
     borderRadius: 10,
     justifyContent: 'center',
