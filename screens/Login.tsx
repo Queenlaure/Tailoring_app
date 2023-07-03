@@ -24,10 +24,19 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../store';
 import { TailorInfo } from '../store/tailor/tailorSlice';
+import CustomModalText from '../components/modals/CustomModalText';
+import {
+  setButtonLoading,
+  stopButtonLoading,
+} from '../store/loading/buttonSlice';
 
 const Login = ({ navigation }: any) => {
   const dispatch = useDispatch<AppDispatch>();
   const tailorSlice = useSelector((state: RootState) => state.tailor);
+  const buttonSlice = useSelector((state: RootState) => state.button);
+  const [showModal, setShowModal] = useState(false);
+
+  const [loading, setLoading] = useState(false);
 
   // console.log('taikor silice', tailorSlice);
 
@@ -50,6 +59,7 @@ const Login = ({ navigation }: any) => {
   });
 
   const onSubmit = async (data: any) => {
+    dispatch(setButtonLoading());
     console.log(data.email);
 
     try {
@@ -79,6 +89,8 @@ const Login = ({ navigation }: any) => {
           if (doc.data().tailor) {
             dispatch(TailorInfo(doc.data()));
             // console.log('some',doc.data().tailor);
+
+            // setShowModal(!showModal);
             navigation.navigate('HomeStack');
           } else {
             navigation.navigate('Gallery');
@@ -146,8 +158,27 @@ const Login = ({ navigation }: any) => {
         // onPress={() => navigation.navigate('HomeStack')}
         style={styles.create}
       >
-        <BlueButton text="Login" onClickButton={handleSubmit(onSubmit)} />
+        <BlueButton
+          text="Login"
+          onClickButton={handleSubmit(onSubmit)}
+          isLoading={buttonSlice.buttonLoading}
+        />
       </View>
+
+      {/* <View>
+        {
+          <CustomModalText
+            title={'Succesfully logged in '}
+            visible={showModal}
+            setVisible={setShowModal}
+            extraFunction={() => {
+              navigation.navigate('HomeStack');
+            }}
+            showIcon={false}
+          />
+        }
+      </View> */}
+
       {/* <View style={styles.orSection}>
         <View style={styles.line}></View>
         <Text>or</Text>

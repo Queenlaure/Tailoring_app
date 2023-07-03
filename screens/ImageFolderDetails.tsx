@@ -26,7 +26,7 @@ import {
           flex: 1,
           backgroundColor: COLORS.light,
           paddingHorizontal: 18,
-          paddingTop: 55,
+          paddingTop: 65,
         }}
       >
         <View style={styles.hero}>

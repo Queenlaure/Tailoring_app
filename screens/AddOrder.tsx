@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   },
   clientName: {
     backgroundColor: COLORS.white,
-    width: 300,
+    width: '98%',
     height: 45,
     borderRadius: 10,
     justifyContent: 'center',
