@@ -8,7 +8,7 @@ import {
   ScrollView,
   FlatList,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { galleryCards } from '../utils/galleryCards';
 import { GalleryCardsProps } from '../utils/galleryCards';
 import { COLORS } from '../utils/colors';
@@ -22,6 +22,31 @@ import * as ImagePicker from 'expo-image-picker';
 import GreyInputField from '../components/inputFields/GreyInputField';
 import BlueButton from '../components/buttons/BlueButton';
 
+import { db, auth, storage } from '../firebase-config';
+import {
+  getDoc,
+  getDocs,
+  collection,
+  addDoc,
+  updateDoc,
+  doc,
+  query,
+  where,
+} from 'firebase/firestore';
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+  uploadBytesResumable,
+} from 'firebase/storage';
+import { useForm, Controller } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store';
+import CustomGreyInput from '../components/inputFields/CustomGreyInput';
+import NativeUIText from '../components/NativeUIText/NativeUIText';
+import { galleryInfo } from '../store/gallery/gallerySlice';
+// import { CustomerType, customersInfo } from '../store/customer/customerSlice';
+
 const width = Dimensions.get('screen').width / 2 - 30;
 
 interface Props {
@@ -33,6 +58,8 @@ const Gallery = ({ navigation }: any) => {
   const [visible, setVisible] = useState(false);
   const show = () => setVisible(true);
   const hide = () => setVisible(false);
+
+  const dispatch = useDispatch();
 
   const [images, setImages] = useState<any>([]);
 
@@ -56,13 +83,140 @@ const Gallery = ({ navigation }: any) => {
     }
   };
 
+  const tailorSlice = useSelector((state: RootState) => state.tailor);
+  const gallerySlice = useSelector((state: RootState) => state.gallery);
+
+  const [gallery, setGallery] = useState<any>([]);
+
+  // const [userRole, setUserRole] = useState('');
+  // const [checked, setChecked] = useState(0);
+  const [uploading, setUploading] = useState(false);
+  const [newCreatedID, setNewCreatedID] = useState<any>('');
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      folderName: '',
+      tailorEmail: tailorSlice.user.email,
+      // number: '',
+      // category: userRole,
+      // address: '',
+    },
+  });
+
+  // console.log(userRole);
+
+  const onSubmit = async (data: any) => {
+    console.log('hello');
+    const galleryCollectionRef = collection(db, 'gallery');
+
+    try {
+      const blob: any = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function (e) {
+          console.log(e);
+          reject(new TypeError('Network request failed'));
+        };
+        xhr.responseType = 'blob';
+        xhr.open('GET', images[0]?.uri, true);
+        xhr.send(null);
+      });
+
+      await addDoc(galleryCollectionRef, {
+        folderName: data.folderName,
+        tailorEmail: tailorSlice.user.email,
+      }).then((response) => {
+        console.log(response.id);
+        const imageRef = ref(storage, `gallery/${response.id}`);
+        const metadata = {
+          contentType: 'image/jpg',
+        };
+
+        uploadBytes(imageRef, blob, metadata)
+          .then(async (snapshot) => {
+            const downloadURL = await getDownloadURL(imageRef);
+            console.log(downloadURL);
+            const imageDoc = doc(db, 'gallery', response.id);
+
+            await updateDoc(imageDoc, {
+              imageUrl: downloadURL,
+            });
+            blob.close();
+          })
+          .then(navigation.navigate('Gallery'));
+        setNewCreatedID(response.id);
+        setVisible(false);
+      });
+
+      // console.log(newCreatedID);
+
+      // navigation.navigate('HomeStack');
+    } catch (err: any) {
+      console.log(err.message);
+    }
+    // setLoading(false);
+    // dispatch(stopButtonLoading());
+    reset({
+      folderName: '',
+      tailorEmail: tailorSlice.user.email,
+      // category: userRole,
+      // address: '',
+      // phone: ""
+    });
+
+    // setLoading(!loading);
+    // dispatch(stopButtonLoading());
+  };
+
+  useEffect(() => {
+    const getGallery = async () => {
+      try {
+        // Create a query against the collection.
+        const galleryRef = collection(db, 'gallery');
+        const q = query(
+          galleryRef,
+          where('tailorEmail', '==', tailorSlice.user.email)
+        );
+
+        const querySnapshot = await getDocs(q);
+        setGallery(
+          querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        );
+
+        dispatch(galleryInfo(gallery));
+        // console.log('queens', customers);
+
+        // querySnapshot.docs.forEach((doc) => {
+        //   dispatch(customersInfo([doc.data()]));
+        //   // doc.data() is never undefined for query doc snapshots
+        //   console.log(doc.id, ' => cc ', doc.data());
+        // });
+      } catch (error: any) {
+        // console.log(error.message);
+        // setFirebaseErr(error.message);
+      }
+    };
+
+    getGallery();
+    // console.log(gallery);
+  }, [gallery]);
+
+  // console.log(gallerySlice);
+
   return (
     <View
       style={{
         flex: 1,
         backgroundColor: COLORS.lightestGrey,
         paddingHorizontal: 18,
-        paddingTop: 55,
+        paddingTop: 65,
       }}
     >
       <View style={styles.hero}>
@@ -79,7 +233,7 @@ const Gallery = ({ navigation }: any) => {
           gap: 15,
         }}
       >
-        {galleryCards.map((galleryCard: GalleryCardsProps, index: number) => (
+        {gallery.map((galleryCard: any, index: number) => (
           <TouchableOpacity
             key={index}
             activeOpacity={0.8}
@@ -91,17 +245,25 @@ const Gallery = ({ navigation }: any) => {
               <View
                 style={{
                   height: 100,
+                  width: '100%',
                   alignItems: 'center',
                 }}
               >
                 <Image
-                  source={galleryCard.pic}
-                  style={{ flex: 1, resizeMode: 'contain' }}
+                  source={{
+                    uri: galleryCard.imageUrl,
+                  }}
+                  style={{
+                    flex: 1,
+                    resizeMode: 'contain',
+                    width: '100%',
+                    height: '100%',
+                  }}
                 />
               </View>
 
               <Text style={{ fontSize: 17, marginTop: 10 }}>
-                {galleryCard.name}
+                {galleryCard.folderName}
               </Text>
             </View>
           </TouchableOpacity>
@@ -125,9 +287,7 @@ const Gallery = ({ navigation }: any) => {
               <Ionicons name={'camera'} size={80} color={COLORS.light} />
             </View>
             <View>
-              <Text style={{ fontSize: 17, marginTop: 10 }}>
-                Add New folder
-              </Text>
+              <Text style={{ fontSize: 17, marginTop: 10 }}>Add New Image</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -170,7 +330,7 @@ const Gallery = ({ navigation }: any) => {
 
             <View style={styles.images}>
               <ScrollView horizontal={true} keyboardShouldPersistTaps="handled">
-                {images?.map((image: any, index:any) => {
+                {images?.map((image: any, index: any) => {
                   return (
                     <Pressable
                       style={{
@@ -195,10 +355,21 @@ const Gallery = ({ navigation }: any) => {
               </ScrollView>
             </View>
             <View style={{ alignItems: 'center' }}>
-              <GreyInputField placeholder="folder name" />
+              <CustomGreyInput
+                // label="folder name"
+                placeholder="folder name"
+                control={control}
+                name={'folderName'}
+                secureTextEntry={false}
+              />
+              {errors.folderName && (
+                <NativeUIText textColor="red">
+                  folder name is requuired
+                </NativeUIText>
+              )}
             </View>
             <View style={{ alignItems: 'center', marginTop: 10 }}>
-              <BlueButton text="Save" />
+              <BlueButton text="Save" onClickButton={handleSubmit(onSubmit)} />
             </View>
           </View>
         </Modal>
@@ -247,8 +418,9 @@ const styles = StyleSheet.create({
     // marginTop: 1,
     alignItems: 'center',
     flexWrap: 'wrap',
-    paddingTop: 20,
+    paddingTop: 5,
     marginBottom: -15,
+    paddingHorizontal: 15,
     // position: "absolute",
     // bottom: 0,
   },
