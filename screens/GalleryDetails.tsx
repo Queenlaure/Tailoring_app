@@ -16,7 +16,7 @@ import { COLORS } from '../utils/colors';
 
 const width = Dimensions.get('screen').width / 2 - 30;
 
-const ImageFolderDetails = ({ route }: any) => {
+const GalleryDetails = ({ route }: any) => {
   const { image, name } = route.params;
 
   console.log(image);
@@ -51,7 +51,7 @@ const ImageFolderDetails = ({ route }: any) => {
   );
 };
 
-export default ImageFolderDetails;
+export default GalleryDetails;
 
 const styles = StyleSheet.create({
   hero: {

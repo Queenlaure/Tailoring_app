@@ -20,6 +20,7 @@ import NativeUIText from '../components/NativeUIText/NativeUIText';
 import { db, auth, storage } from '../firebase-config';
 import { getDoc, collection, addDoc, updateDoc, doc } from 'firebase/firestore';
 import * as ImagePicker from 'expo-image-picker';
+import CustomModalText from '../components/modals/CustomModalText';
 import {
   getDownloadURL,
   ref,
@@ -40,6 +41,8 @@ const AddCustomer = ({ navigation }: any) => {
   const [checked, setChecked] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [newCreatedID, setNewCreatedID] = useState<any>('');
+
+  const [showModal, setShowModal] = useState(false);
 
   const {
     control,
@@ -90,19 +93,19 @@ const AddCustomer = ({ navigation }: any) => {
           contentType: 'image/jpg',
         };
 
-        uploadBytes(imageRef, blob, metadata)
-          .then(async (snapshot) => {
-            const downloadURL = await getDownloadURL(imageRef);
-            console.log(downloadURL);
-            const imageDoc = doc(db, 'customers', response.id);
+        uploadBytes(imageRef, blob, metadata).then(async (snapshot) => {
+          const downloadURL = await getDownloadURL(imageRef);
+          console.log(downloadURL);
+          const imageDoc = doc(db, 'customers', response.id);
 
-            await updateDoc(imageDoc, {
-              imageUrl: downloadURL,
-            });
-            blob.close();
-          })
-          .then(navigation.navigate('HomeStack'));
+          await updateDoc(imageDoc, {
+            imageUrl: downloadURL,
+          });
+          blob.close();
+        });
+        // .then(navigation.navigate('HomeStack'));
         setNewCreatedID(response.id);
+        setShowModal(!showModal);
       });
 
       // console.log(newCreatedID);
@@ -294,6 +297,20 @@ const AddCustomer = ({ navigation }: any) => {
       </View>
       <View style={{ alignItems: 'center', marginTop: 10 }}>
         <BlueButton text="Save" onClickButton={handleSubmit(onSubmit)} />
+      </View>
+
+      <View>
+        {
+          <CustomModalText
+            title={'Customer successfully saved 😉 '}
+            visible={showModal}
+            setVisible={setShowModal}
+            extraFunction={() => {
+              navigation.navigate('HomeStack');
+            }}
+            showIcon={false}
+          />
+        }
       </View>
     </View>
   );

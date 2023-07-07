@@ -45,6 +45,8 @@ import { RootState } from '../store';
 import CustomGreyInput from '../components/inputFields/CustomGreyInput';
 import NativeUIText from '../components/NativeUIText/NativeUIText';
 import { galleryInfo } from '../store/gallery/gallerySlice';
+import CustomModalText from '../components/modals/CustomModalText';
+
 // import { CustomerType, customersInfo } from '../store/customer/customerSlice';
 
 const width = Dimensions.get('screen').width / 2 - 30;
@@ -62,6 +64,8 @@ const Gallery = ({ navigation }: any) => {
   const dispatch = useDispatch();
 
   const [images, setImages] = useState<any>([]);
+
+  const [showModal, setShowModal] = useState(false);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -139,20 +143,20 @@ const Gallery = ({ navigation }: any) => {
           contentType: 'image/jpg',
         };
 
-        uploadBytes(imageRef, blob, metadata)
-          .then(async (snapshot) => {
-            const downloadURL = await getDownloadURL(imageRef);
-            console.log(downloadURL);
-            const imageDoc = doc(db, 'gallery', response.id);
+        uploadBytes(imageRef, blob, metadata).then(async (snapshot) => {
+          const downloadURL = await getDownloadURL(imageRef);
+          console.log(downloadURL);
+          const imageDoc = doc(db, 'gallery', response.id);
 
-            await updateDoc(imageDoc, {
-              imageUrl: downloadURL,
-            });
-            blob.close();
-          })
-          .then(navigation.navigate('Gallery'));
+          await updateDoc(imageDoc, {
+            imageUrl: downloadURL,
+          });
+          blob.close();
+        });
+        // .then(navigation.navigate('Gallery'));
         setNewCreatedID(response.id);
         setVisible(false);
+        setShowModal(!showModal);
       });
 
       // console.log(newCreatedID);
@@ -237,7 +241,12 @@ const Gallery = ({ navigation }: any) => {
           <TouchableOpacity
             key={index}
             activeOpacity={0.8}
-            onPress={() => navigation.navigate('ImageFolderDetails')}
+            onPress={() =>
+              navigation.navigate('GalleryDetails', {
+                image: galleryCard.imageUrl,
+                name: galleryCard.folderName,
+              })
+            }
             // activeOpacity={0.8}
             // onPress={() => navigation.navigate('Details', plant)}
           >
@@ -357,15 +366,13 @@ const Gallery = ({ navigation }: any) => {
             <View style={{ alignItems: 'center' }}>
               <CustomGreyInput
                 // label="folder name"
-                placeholder="folder name"
+                placeholder="name"
                 control={control}
                 name={'folderName'}
                 secureTextEntry={false}
               />
               {errors.folderName && (
-                <NativeUIText textColor="red">
-                  folder name is requuired
-                </NativeUIText>
+                <NativeUIText textColor="red">name is requuired</NativeUIText>
               )}
             </View>
             <View style={{ alignItems: 'center', marginTop: 10 }}>
@@ -374,6 +381,19 @@ const Gallery = ({ navigation }: any) => {
           </View>
         </Modal>
       </SafeAreaView>
+      <View>
+        {
+          <CustomModalText
+            title={'Your order has been saved successfully 🎊 '}
+            visible={showModal}
+            setVisible={setShowModal}
+            extraFunction={() => {
+              navigation.navigate('HomeStack');
+            }}
+            showIcon={false}
+          />
+        }
+      </View>
     </View>
   );
 };
@@ -403,7 +423,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 1.0,
   },
   upper: {
-    height: 300,
+    height: 280,
     backgroundColor: '#DDD',
     opacity: 0.5,
   },

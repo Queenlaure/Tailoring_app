@@ -19,6 +19,12 @@ import NativeUIText from '../components/NativeUIText/NativeUIText';
 import { auth, db } from '../firebase-config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { getDoc, collection, addDoc } from 'firebase/firestore';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store';
+import {
+  setButtonLoading,
+  stopButtonLoading,
+} from '../store/loading/buttonSlice';
 
 const CreateAccount = ({ navigation }: any) => {
   const [userRole, setUserRole] = useState('Tailor');
@@ -27,6 +33,10 @@ const CreateAccount = ({ navigation }: any) => {
     password: '',
     confirmPassword: '',
   });
+
+  const dispatch = useDispatch<AppDispatch>();
+  const buttonSlice = useSelector((state: RootState) => state.button);
+  const [loading, setLoading] = useState(false);
 
   const {
     control,
@@ -42,6 +52,7 @@ const CreateAccount = ({ navigation }: any) => {
   console.log(userRole);
 
   const onSubmit = async (data: any) => {
+    dispatch(setButtonLoading());
     if (data.password !== data.confirmPassword) {
       return setWarning({ ...warning, password: 'Passwords do not match' });
     }
@@ -72,7 +83,7 @@ const CreateAccount = ({ navigation }: any) => {
 
         console.log(customer);
 
-        navigation.navigate('Gallery');
+        navigation.navigate('AvailableTailors');
       } catch (error: any) {
         console.log(error.message);
         setFirebaseErr(error.message);
@@ -154,6 +165,7 @@ const CreateAccount = ({ navigation }: any) => {
         <BlueButton
           text="Create an Account"
           onClickButton={handleSubmit(onSubmit)}
+          isLoading={buttonSlice.buttonLoading}
         />
       </TouchableOpacity>
       <View style={styles.orSection}>

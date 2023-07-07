@@ -23,6 +23,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { db, auth, storage } from '../firebase-config';
 import { getDoc, collection, addDoc, updateDoc, doc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import CustomModalText from '../components/modals/CustomModalText';
+
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 
@@ -43,6 +45,8 @@ const Agbada = ({ route, userOption, navigation }: Props) => {
   const [completed, setCompleted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [images, setImages] = useState<any>([]);
+
+  const [showModal, setShowModal] = useState(false);
 
   if (urgent) {
     console.log(urgent);
@@ -135,18 +139,18 @@ const Agbada = ({ route, userOption, navigation }: Props) => {
           contentType: 'image/jpg',
         };
 
-        uploadBytes(imageRef, blob, metadata)
-          .then(async (snapshot) => {
-            const downloadURL = await getDownloadURL(imageRef);
-            console.log(downloadURL);
-            const imageDoc = doc(db, 'orders', response.id);
+        uploadBytes(imageRef, blob, metadata).then(async (snapshot) => {
+          const downloadURL = await getDownloadURL(imageRef);
+          console.log(downloadURL);
+          const imageDoc = doc(db, 'orders', response.id);
 
-            await updateDoc(imageDoc, {
-              imageUrl: downloadURL,
-            });
-            blob.close();
-          })
-          .then(navigation.navigate('HomeStack'));
+          await updateDoc(imageDoc, {
+            imageUrl: downloadURL,
+          });
+          blob.close();
+          setShowModal(!showModal);
+        });
+        // .then(navigation.navigate('HomeStack'));
         setNewCreatedID(response.id);
       });
 
@@ -358,6 +362,19 @@ const Agbada = ({ route, userOption, navigation }: Props) => {
             <BlueButton text="Save" onClickButton={handleSubmit(onSubmit)} />
           </View>
         </ScrollView>
+        <View>
+          {
+            <CustomModalText
+              title={'Your order has been saved successfully 🎊 '}
+              visible={showModal}
+              setVisible={setShowModal}
+              extraFunction={() => {
+                navigation.navigate('HomeStack');
+              }}
+              showIcon={false}
+            />
+          }
+        </View>
       </View>
     </View>
   );

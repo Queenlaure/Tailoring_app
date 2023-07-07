@@ -24,6 +24,7 @@ import { RootState } from '../store';
 import { CustomerType, customersInfo } from '../store/customer/customerSlice';
 import { OrdersType, ordersInfo } from '../store/orders/ordersSlice';
 import Search from '../components/inputFields/Search';
+import CustomModalText from '../components/modals/CustomModalText';
 
 const Orders = ({ navigation }: any) => {
   const categories = ['ALL', 'URGENT', 'COMPLETED'];
@@ -33,11 +34,14 @@ const Orders = ({ navigation }: any) => {
   const [filteredData, setFilteredData] = useState<OrdersType[]>(
     [] as OrdersType[]
   );
+  const [showModal, setShowModal] = useState(false);
 
   const UpdateToCompleted = (id: string) => {
     const docRef = doc(db, 'orders', id);
     return updateDoc(docRef, { completed: true })
       .then((docRef) => {
+        setShowModal(!showModal);
+
         console.log(
           'A New Document Field has been added to an existing document'
         );
@@ -530,6 +534,19 @@ const Orders = ({ navigation }: any) => {
           ))}
         </ScrollView>
       )}
+      <View>
+        {
+          <CustomModalText
+            title={'Order completed successfully 🎊 '}
+            visible={showModal}
+            setVisible={setShowModal}
+            extraFunction={() => {
+              navigation.navigate('HomeStack');
+            }}
+            showIcon={false}
+          />
+        }
+      </View>
     </View>
   );
 };
