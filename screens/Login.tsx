@@ -93,7 +93,7 @@ const Login = ({ navigation }: any) => {
             // setShowModal(!showModal);
             navigation.navigate('HomeStack');
           } else {
-            navigation.navigate('Gallery');
+            navigation.navigate('AvailableTailors');
           }
         });
         // console.log('present user at the monet',q)
@@ -138,7 +138,7 @@ const Login = ({ navigation }: any) => {
           secureTextEntry={false}
         />
         {errors.email && (
-          <NativeUIText textColor="red">email is requuired</NativeUIText>
+          <NativeUIText textColor="red">email is required</NativeUIText>
         )}
         <FieldInput
           label="Password:"
@@ -148,7 +148,7 @@ const Login = ({ navigation }: any) => {
           secureTextEntry={true}
         />
         {errors.password && (
-          <NativeUIText textColor="red">password is requuired</NativeUIText>
+          <NativeUIText textColor="red">password is required</NativeUIText>
         )}
         {/* <PasswordField label="Password:" placeholder="xxxxxxxxxx" password /> */}
       </View>

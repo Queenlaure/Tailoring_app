@@ -5,6 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Home from '../screens/Home';
 import Orders from '../screens/Orders';
 import Gallery from '../screens/Gallery';
+import TailorChats from '../screens/Tailorchats';
 import { COLORS } from '../utils/colors';
 
 // import HomeScreen from "./HomeScreen";
@@ -16,6 +17,7 @@ const BottomTab = createBottomTabNavigator();
 const homeName = 'Home';
 const GalleryName = 'Gallery';
 const OrdersName = 'Orders';
+const TailorChatsName = 'TailorChats';
 
 const HomeStack = () => {
   const [images, setImages] = useState([]);
@@ -33,6 +35,10 @@ const HomeStack = () => {
             iconName = focused ? 'copy' : 'copy-outline';
           } else if (rn === GalleryName) {
             iconName = focused ? 'albums' : 'albums-outline';
+          } else if (rn === TailorChatsName) {
+            iconName = focused
+              ? 'chatbubble-ellipses-sharp'
+              : 'chatbubble-ellipses-outline';
           }
 
           // You can return any component that you like here!
@@ -81,6 +87,11 @@ const HomeStack = () => {
       <BottomTab.Screen
         name={GalleryName}
         component={Gallery}
+        options={{ headerShown: false }}
+      />
+      <BottomTab.Screen
+        name={TailorChatsName}
+        component={TailorChats}
         options={{ headerShown: false }}
       />
     </BottomTab.Navigator>

@@ -1,4 +1,11 @@
-import { View, Text, Modal, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  Modal,
+  StyleSheet,
+  TouchableOpacity,
+  Pressable,
+} from 'react-native';
 import React from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS } from '../../utils/colors';
@@ -15,8 +22,12 @@ const CustomModal = ({
   extraFunction,
   children,
 }: CustomModalProps) => {
+  // const [visible, setVisible] = useState(false);
+  const show = () => setVisible(true);
+  const hide = () => setVisible(false);
   return (
-    <Modal visible={visible}>
+    <View>
+      {/* <Modal visible={visible}>
       <View style={styles.modalBackground}>
         <View style={styles.modalContainer}>
           <TouchableOpacity
@@ -36,7 +47,34 @@ const CustomModal = ({
           <View style={styles.childrenContainer}>{children}</View>
         </View>
       </View>
-    </Modal>
+    </Modal> */}
+
+      <Modal
+        visible={visible}
+        onRequestClose={hide}
+        animationType="fade"
+        transparent
+      >
+        <Pressable style={styles.upper} />
+        <View style={styles.modalContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              setVisible(!visible);
+              extraFunction();
+            }}
+            style={styles.header}
+          >
+            <MaterialCommunityIcons
+              name={'window-close'}
+              color={COLORS.blue}
+              size={30}
+            />
+          </TouchableOpacity>
+
+          <View style={styles.childrenContainer}>{children}</View>
+        </View>
+      </Modal>
+    </View>
   );
 };
 
@@ -44,12 +82,14 @@ export default CustomModal;
 
 const styles = StyleSheet.create({
   modalBackground: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    // flex: 1,
+    // backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContainer: {
+    position: 'absolute',
     width: '90%',
     height: 150,
     backgroundColor: 'white',
@@ -57,6 +97,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 6,
     elevation: 20,
+    left: '5%',
+    top: '40%',
   },
   header: {
     width: '100%',
@@ -69,5 +111,18 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     height: '100%',
     width: '100%',
+  },
+  upper: {
+    height: '100%',
+    width: '100%',
+    // backgroundColor: '#DDD',
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    position: 'relative',
+    opacity: 0.5,
+  },
+  lower: {
+    flex: 1,
+    backgroundColor: 'white',
+    justifyContent: 'center',
   },
 });

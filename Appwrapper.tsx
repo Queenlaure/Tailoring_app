@@ -26,7 +26,11 @@ import Blouse from './screens/Blouse';
 import ImageFolderDetails from './screens/ImageFolderDetails';
 import ViewCustomers from './screens/ViewCustomer';
 import CustomerDetails from './screens/CustomerDetails';
+import AvailableTailors from './screens/AvailableTailors';
 import SpecificOrderDetail from './screens/SpecificOrderDetail';
+import CustomerGallery from './screens/CustomerGallery';
+import GalleryDetails from './screens/GalleryDetails';
+import { TailorPersonalChat } from './screens/TailorPersonalChat';
 import HomeStack from './navigation/Homestack';
 import Provider from 'react-redux';
 import { store } from './store';
@@ -38,6 +42,7 @@ import {
   Raleway_400Regular,
   Raleway_900Black,
 } from '@expo-google-fonts/raleway';
+import { Drawer } from 'react-native-paper';
 
 const Tab = createBottomTabNavigator();
 
@@ -147,6 +152,11 @@ export default function Appwrapper() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
+            name="AvailableTailors"
+            component={AvailableTailors}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
             name="HomeStack"
             component={HomeStack}
             options={{ headerShown: false }}
@@ -164,6 +174,21 @@ export default function Appwrapper() {
           <Stack.Screen
             name="SpecificOrderDetail"
             component={SpecificOrderDetail}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="CustomerGallery"
+            component={CustomerGallery}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="GalleryDetails"
+            component={GalleryDetails}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="TailorPersonalChat"
+            component={TailorPersonalChat}
             options={{ headerShown: false }}
           />
 

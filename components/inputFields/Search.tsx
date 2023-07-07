@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     color: COLORS.dark,
     fontWeight: 'bold',
     fontSize: 14,
-    marginBottom: 15,
+    marginBottom: 6,
   },
 
   searchContainer: {

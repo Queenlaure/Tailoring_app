@@ -25,6 +25,7 @@ import { getDoc, collection, addDoc, updateDoc, doc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
+import CustomModalText from '../components/modals/CustomModalText';
 
 const width = Dimensions.get('screen').width / 2 - 30;
 
@@ -43,6 +44,8 @@ const Gown = ({ route, userOption, navigation }: Props) => {
   const [completed, setCompleted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [images, setImages] = useState<any>([]);
+
+  const [showModal, setShowModal] = useState(false);
 
   if (urgent) {
     console.log(urgent);
@@ -115,18 +118,18 @@ const Gown = ({ route, userOption, navigation }: Props) => {
           contentType: 'image/jpg',
         };
 
-        uploadBytes(imageRef, blob, metadata)
-          .then(async (snapshot) => {
-            const downloadURL = await getDownloadURL(imageRef);
-            console.log(downloadURL);
-            const imageDoc = doc(db, 'orders', response.id);
+        uploadBytes(imageRef, blob, metadata).then(async (snapshot) => {
+          const downloadURL = await getDownloadURL(imageRef);
+          console.log(downloadURL);
+          const imageDoc = doc(db, 'orders', response.id);
 
-            await updateDoc(imageDoc, {
-              imageUrl: downloadURL,
-            });
-            blob.close();
-          })
-          .then(navigation.navigate('HomeStack'));
+          await updateDoc(imageDoc, {
+            imageUrl: downloadURL,
+          });
+          blob.close();
+          setShowModal(!showModal);
+        });
+        // .then(navigation.navigate('HomeStack'));
         setNewCreatedID(response.id);
       });
 
@@ -361,6 +364,20 @@ const Gown = ({ route, userOption, navigation }: Props) => {
 
           <View style={{ marginTop: 30 }}>
             <BlueButton text="Save" onClickButton={handleSubmit(onSubmit)} />
+          </View>
+
+          <View>
+            {
+              <CustomModalText
+                title={'Customer successfully saved 😉 '}
+                visible={showModal}
+                setVisible={setShowModal}
+                extraFunction={() => {
+                  navigation.navigate('HomeStack');
+                }}
+                showIcon={false}
+              />
+            }
           </View>
         </ScrollView>
       </View>
