@@ -83,7 +83,7 @@ const CreateAccount = ({ navigation }: any) => {
 
         console.log(customer);
 
-        navigation.navigate('AvailableTailors');
+        navigation.navigate('SetClientProfile');
       } catch (error: any) {
         console.log(error.message);
         setFirebaseErr(error.message);

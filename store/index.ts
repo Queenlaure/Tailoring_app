@@ -4,6 +4,7 @@ import customerReducer from './customer/customerSlice';
 import ordersReducer from './orders/ordersSlice';
 import galleryReducer from './gallery/gallerySlice';
 import buttonReducer from './loading/buttonSlice';
+import clientReducer from './client/clientSlice';
 // import userReducer from './user/userSlice'
 // import postsReducer from './posts/postsSlice'
 export const store = configureStore({
@@ -12,7 +13,8 @@ export const store = configureStore({
     customer: customerReducer,
     orders: ordersReducer,
     gallery: galleryReducer,
-    button: buttonReducer
+    button: buttonReducer,
+    client: clientReducer,
     // user:userReducer,
     // post:postsReducer
   },

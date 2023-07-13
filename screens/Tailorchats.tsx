@@ -10,13 +10,38 @@ import {
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-import { getDocs, collection, deleteDoc, doc } from 'firebase/firestore';
+import {
+  getDocs,
+  collection,
+  deleteDoc,
+  doc,
+  query,
+  where,
+} from 'firebase/firestore';
 import { db } from '../firebase-config';
+import { RootState } from '../store';
+
+export interface ContactedTypes {
+  clientEmail?: string;
+  clientID?: string;
+  clientName?: string;
+  contacted?: boolean;
+  id?: string;
+  tailorEmail?: string;
+  date?: Date | any;
+}
 
 const TailorChats = ({ navigation }: any) => {
   // const studentSlice = useSelector((state) => state.student);
   const [messages, setMessages] = useState([]);
   // const navigation = useNavigation();
+
+  const tailorSlice = useSelector((state: RootState) => state.tailor);
+  const clientSlice = useSelector((state: RootState) => state.client.user);
+
+  const [contactedClients, setContactedClients] = useState<ContactedTypes[]>(
+    []
+  );
 
   // useEffect(() => {
   //   const chatCollectionRef = collection(db, "chat");
@@ -66,6 +91,40 @@ const TailorChats = ({ navigation }: any) => {
     },
   ];
 
+  useEffect(() => {
+    // console.log('Helloooooo there ', ordersSlice);
+
+    const timeout = setTimeout(() => {
+      const getClients = async () => {
+        try {
+          // Create a query against the collection.
+          const clientsRef = collection(db, 'contacted');
+          const q = query(
+            clientsRef,
+            // where('tailorEmail', '==', tailorSlice.user.email)
+            where('tailorEmail', '==', tailorSlice.user.email)
+          );
+
+          const querySnapshot = await getDocs(q);
+          // console.log(querySnapshot);
+
+          setContactedClients(
+            querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+          );
+
+          // dispatch(ClientsInfo(client[0]));
+        } catch (error: any) {
+          console.log(error.message);
+        }
+      };
+      getClients();
+    }, 1000);
+
+    return () => clearTimeout(timeout);
+  }, []);
+  console.log('cccc', contactedClients);
+  console.log('ttt', tailorSlice.user.tailorID);
+
   return (
     <View
       style={{
@@ -80,35 +139,35 @@ const TailorChats = ({ navigation }: any) => {
         <Text style={styles.heading}>Chat</Text>
       </View>
       <View style={styles.Container}>
-        <FlatList
-          data={Messages}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
+        {contactedClients.map((item: ContactedTypes) => {
+          return (
             <TouchableOpacity
+              key={item.id}
               onPress={() =>
                 navigation.navigate('TailorPersonalChat', {
-                  userName: item.userName,
+                  senderName: item.clientName,
+                  senderID: item.clientID,
                 })
               }
               style={styles.Card}
             >
               <View style={styles.UserInfo}>
                 <View style={styles.UserImgWrapper}>
-                  <Image source={item.userImg} style={styles.UserImg} />
+                  {/* <Image source={item.userImg} style={styles.UserImg} /> */}
                 </View>
                 <View style={styles.TextSection}>
                   <View style={styles.UserInfoText}>
-                    <Text style={styles.UserName}>{item.userName}</Text>
-                    <Text style={styles.PostTime}>{'1 day ago'}</Text>
+                    <Text style={styles.UserName}>{item.clientName}</Text>
+                    {/* <Text style={styles.PostTime}>{item.date}</Text> */}
                   </View>
                   <Text style={styles.MessageText}>
-                    {'start a conversation'}
+                    {'Continue Conversation'}
                   </Text>
                 </View>
               </View>
             </TouchableOpacity>
-          )}
-        />
+          );
+        })}
       </View>
     </View>
   );
@@ -128,7 +187,7 @@ const styles = StyleSheet.create({
     color: COLORS.dark,
   },
   Card: {
-    flex: 1,
+    // flex: 1,
     paddingLeft: 20,
     paddingRight: 20,
     alignItems: 'center',

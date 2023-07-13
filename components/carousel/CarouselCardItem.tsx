@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     borderRadius: 8,
-    marginBottom: 10,
+    marginBottom: 0,
     width: ITEM_WIDTH,
     // paddingBottom: 40,
     shadowColor: '#000',
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: ITEM_WIDTH,
-    height: 240,
+    height: '80%',
   },
   header: {
     color: '#222',
