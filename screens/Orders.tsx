@@ -36,9 +36,9 @@ const Orders = ({ navigation }: any) => {
   );
   const [showModal, setShowModal] = useState(false);
 
-  const UpdateToCompleted = (id: string) => {
+  const UpdateToCompleted = async (id: string) => {
     const docRef = doc(db, 'orders', id);
-    return updateDoc(docRef, { completed: true })
+    return await updateDoc(docRef, { completed: true })
       .then((docRef) => {
         setShowModal(!showModal);
 
@@ -74,6 +74,8 @@ const Orders = ({ navigation }: any) => {
     );
   };
 
+  // console.log(catergoryIndex);
+
   const dispatch = useDispatch();
 
   // const [searchText, setSearchText] = useState('');
@@ -89,41 +91,45 @@ const Orders = ({ navigation }: any) => {
   // console.log('queens', customers);
 
   useEffect(() => {
-    const getOrders = async () => {
-      try {
-        // Create a query against the collection.
-        const ordersRef = collection(db, 'orders');
-        const q = query(
-          ordersRef,
-          // where('tailorEmail', '==', tailorSlice.user.email)
-          where('tailorEmail', '==', tailorSlice.user.email)
-        );
+    const timeout = setTimeout(() => {
+      const getOrders = async () => {
+        try {
+          // Create a query against the collection.
+          const ordersRef = collection(db, 'orders');
+          const q = query(
+            ordersRef,
+            // where('tailorEmail', '==', tailorSlice.user.email)
+            where('tailorEmail', '==', tailorSlice.user.email)
+          );
 
-        const querySnapshot = await getDocs(q);
-        // console.log(querySnapshot);
+          const querySnapshot = await getDocs(q);
+          // console.log(querySnapshot);
 
-        setOrders(
-          querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-        );
+          setOrders(
+            querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+          );
 
-        dispatch(ordersInfo(orders));
-        // console.log('queens', customers);
+          dispatch(ordersInfo(orders));
+          // console.log('queens', customers);
 
-        // querySnapshot.docs.forEach((doc) => {
-        //   dispatch(customersInfo([doc.data()]));
-        //   // doc.data() is never undefined for query doc snapshots
-        //   console.log(doc.id, ' => cc ', doc.data());
-        // });
-      } catch (error: any) {
-        console.log(error.message);
-        // setFirebaseErr(error.message);
-      }
-    };
+          // querySnapshot.docs.forEach((doc) => {
+          //   dispatch(customersInfo([doc.data()]));
+          //   // doc.data() is never undefined for query doc snapshots
+          //   console.log(doc.id, ' => cc ', doc.data());
+          // });
+        } catch (error: any) {
+          console.log(error.message);
+          // setFirebaseErr(error.message);
+        }
+      };
 
-    // console.log('Helloooooo there ', ordersSlice);
+      // console.log('Helloooooo there ', ordersSlice);
 
-    getOrders();
-  }, [orders]);
+      getOrders();
+    }, 2500);
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   const handleFilter = (valueText: any) => {
     setSearchText(valueText);

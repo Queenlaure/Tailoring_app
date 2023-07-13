@@ -20,11 +20,14 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { TailorInfo } from '../store/tailor/tailorSlice';
 import { useDispatch } from 'react-redux';
 
-const SetProfile = ({ navigation }: any) => {
+const SetClientProfile = ({ navigation }: any) => {
   const [userRole, setUserRole] = useState('Male');
   const [userEmail, setUserEmail] = useState('');
   const [userID, setUserID] = useState('');
+  const [specificClient, setspecificClient] = useState<any>({});
   const dispatch = useDispatch();
+
+  //   console.log('sahsagdhsa', specificClient);
 
   onAuthStateChanged(auth, (currentUser: any) => {
     setUserEmail(currentUser.email);
@@ -36,37 +39,43 @@ const SetProfile = ({ navigation }: any) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      shopName: '',
+      clientName: '',
       address: '',
       contact: '',
     },
   });
 
-  console.log(userRole);
+  //   console.log(userRole);
 
   const onSubmit = async (data: any) => {
+    console.log('clicked submit');
+
     try {
-      const tailorCollectionRef = collection(db, 'tailor');
-      await addDoc(tailorCollectionRef, {
-        shopName: data.shopName,
-        email: userEmail,
+      const clientCollectionRef = collection(db, 'client');
+      await addDoc(clientCollectionRef, {
+        clientName: data.clientName,
+        clientEmail: userEmail,
         address: data.address,
         contact: data.contact,
         specialty: userRole,
-        tailor: true,
-        tailorID: userID,
+        tailor: false,
+        clientID: userID,
       });
       // Create a query against the collection.
-      const q = query(tailorCollectionRef, where('email', '==', userEmail));
+      const q = query(
+        clientCollectionRef,
+        where('clientEmail', '==', userEmail)
+      );
       //  setPresentUser(q);
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
         console.log(doc.id, ' => ', doc.data());
-        if (doc.data().tailor) {
-          dispatch(TailorInfo(doc.data()));
+        if (doc.data().clientName) {
+          //   dispatch(TailorInfo(doc.data()));
+          setspecificClient(doc.data());
           // console.log('some',doc.data().tailor);
-          navigation.navigate('HomeStack');
+          navigation.navigate('AvailableTailors');
         }
       });
       // console.log(tailorCollectionRef);
@@ -82,13 +91,13 @@ const SetProfile = ({ navigation }: any) => {
       </View>
       <View style={{ alignItems: 'center' }}>
         <FieldInput
-          placeholder="Shop Name"
+          placeholder="Name"
           control={control}
-          name={'shopName'}
+          name={'clientName'}
           secureTextEntry={false}
         />
-        {errors.shopName && (
-          <NativeUIText textColor="red">shop name is required</NativeUIText>
+        {errors.clientName && (
+          <NativeUIText textColor="red">client name is required</NativeUIText>
         )}
         {/* <FieldInput
           placeholder="Business (Email Address)"
@@ -100,7 +109,16 @@ const SetProfile = ({ navigation }: any) => {
           <NativeUIText textColor="red">email is required</NativeUIText>
         )} */}
         <FieldInput
-          placeholder="Shop Address"
+          placeholder="Number"
+          control={control}
+          name={'contact'}
+          secureTextEntry={false}
+        />
+        {errors.contact && (
+          <NativeUIText textColor="red">contact is required</NativeUIText>
+        )}
+        <FieldInput
+          placeholder="Address"
           control={control}
           name={'address'}
           secureTextEntry={false}
@@ -108,22 +126,13 @@ const SetProfile = ({ navigation }: any) => {
         {errors.address && (
           <NativeUIText textColor="red">address is required</NativeUIText>
         )}
-        <FieldInput
-          placeholder="Phone Number"
-          control={control}
-          name={'contact'}
-          secureTextEntry={false}
-        />
-        {errors.contact && (
-          <NativeUIText textColor="red">phone number is required</NativeUIText>
-        )}
         {/* <InputField placeholder="Shop Name" />
         <InputField placeholder="Business (Email Address)" />
         <InputField placeholder="Shop Address" />
         <InputField placeholder="Phone Number" /> */}
       </View>
       <View style={styles.radioSection}>
-        <Text style={styles.radioText}>Wears for:</Text>
+        <Text style={styles.radioText}>Gender:</Text>
         <Radio setUserRole={setUserRole} />
       </View>
       <TouchableOpacity activeOpacity={0.8}>
@@ -135,7 +144,7 @@ const SetProfile = ({ navigation }: any) => {
   );
 };
 
-export default SetProfile;
+export default SetClientProfile;
 
 const styles = StyleSheet.create({
   hero: {

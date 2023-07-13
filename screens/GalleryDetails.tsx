@@ -35,7 +35,7 @@ const GalleryDetails = ({ route }: any) => {
         <Text style={styles.heading}>Details</Text>
       </View>
 
-      <View style={{ width: '100%', height: '50%', marginTop: 30 }}>
+      <View style={{ width: '100%', height: '80%', marginTop: 30 }}>
         <Image
           source={{
             uri: image,

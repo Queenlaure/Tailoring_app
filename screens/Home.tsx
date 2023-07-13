@@ -50,7 +50,7 @@ const Home = ({ navigation }: any) => {
         flex: 1,
         backgroundColor: COLORS.white,
         paddingHorizontal: 20,
-        paddingTop: 35,
+        paddingTop: 40,
       }}
     >
       <View
@@ -263,7 +263,7 @@ const Home = ({ navigation }: any) => {
         </View>
 
         <View>
-          <Text style={{ fontWeight: 'bold' }}>EXPLORE</Text>
+          <Text style={{ fontWeight: 'bold', marginTop: 20 }}>EXPLORE</Text>
           <View style={styles.btnsContainer}>
             <TouchableOpacity
               activeOpacity={0.8}
@@ -274,7 +274,7 @@ const Home = ({ navigation }: any) => {
                 style={{
                   alignItems: 'center',
                   justifyContent: 'center',
-                  marginTop: 20,
+                  marginTop: 35,
                 }}
               >
                 <Ionicons
@@ -298,7 +298,7 @@ const Home = ({ navigation }: any) => {
                 style={{
                   alignItems: 'center',
                   justifyContent: 'center',
-                  marginTop: 20,
+                  marginTop: 35,
                 }}
               >
                 <Ionicons
@@ -322,7 +322,7 @@ const Home = ({ navigation }: any) => {
                 style={{
                   alignItems: 'center',
                   justifyContent: 'center',
-                  marginTop: 20,
+                  marginTop: 35,
                 }}
               >
                 <Ionicons
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     // width: ITEM_WIDTH,
     // width: 200,
-    paddingBottom: 40,
+    // paddingBottom: 40,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    // padding: 50,
+    paddingBottom: 40,
   },
   img1: {
     width: '100%',
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
   addCustomer: {
     backgroundColor: COLORS.purple,
     width,
-    height: 110,
+    height: 130,
     flex: 2,
     margin: 5,
     borderRadius: 10,
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
   addOrder: {
     backgroundColor: COLORS.lightBlue,
     width,
-    height: 110,
+    height: 130,
     flex: 2,
     margin: 5,
     borderRadius: 10,
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
   viewCustomers: {
     backgroundColor: COLORS.brown,
     width,
-    height: 110,
+    height: 130,
     flex: 2,
     margin: 5,
     borderRadius: 10,

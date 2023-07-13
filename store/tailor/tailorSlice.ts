@@ -8,6 +8,7 @@ export interface TailorType {
   specialty?: string;
   tailor?: boolean;
   contact?: string;
+  tailorID?: string;
 }
 
 interface TailorState {

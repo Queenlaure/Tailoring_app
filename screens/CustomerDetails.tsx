@@ -34,6 +34,16 @@ const CustomerDetails = ({ navigation, route }: Props) => {
     (state: RootState) => state.customer.customers
   );
 
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setActive(!active);
+    }, 5000);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
   useEffect(() => {
     const getOrders = async () => {
       try {
@@ -52,7 +62,7 @@ const CustomerDetails = ({ navigation, route }: Props) => {
           querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
         );
 
-        dispatch(ordersInfo(orders));
+        // dispatch(ordersInfo(orders));
         // console.log('queens', customers);
 
         // querySnapshot.docs.forEach((doc) => {
@@ -70,7 +80,9 @@ const CustomerDetails = ({ navigation, route }: Props) => {
 
     getOrders();
     // console.log(customer);
-  }, [orders]);
+  }, []);
+
+  // console.log(orders);
 
   return (
     <View
@@ -86,7 +98,7 @@ const CustomerDetails = ({ navigation, route }: Props) => {
         <Text style={styles.heading}>Available Measurements</Text>
       </View>
       <View>
-        {ordersSlice.orders.map((order: OrdersType, index: any) => (
+        {orders.map((order: OrdersType, index: any) => (
           <TouchableOpacity
             key={index}
             style={styles.clientName}

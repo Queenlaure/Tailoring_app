@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Text,
   View,
@@ -23,22 +23,34 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../store';
-import { TailorInfo } from '../store/tailor/tailorSlice';
+import { TailorsInfo, TailorInfo } from '../store/tailor/tailorSlice';
 import CustomModalText from '../components/modals/CustomModalText';
 import {
   setButtonLoading,
   stopButtonLoading,
 } from '../store/loading/buttonSlice';
+import { TailorType } from '../store/tailor/tailorSlice';
+import { ClientInfo } from '../store/client/clientSlice';
 
 const Login = ({ navigation }: any) => {
   const dispatch = useDispatch<AppDispatch>();
   const tailorSlice = useSelector((state: RootState) => state.tailor);
   const buttonSlice = useSelector((state: RootState) => state.button);
-  const [showModal, setShowModal] = useState(false);
+  // const [showModal, setShowModal] = useState(false);
+  const [tailorList, setTailorList] = useState<TailorType[] | any[]>([]);
+  const [clientList, setClientList] = useState<any[]>([]);
+  const [specificUser, setSpecificUser] = useState<any[]>([]);
+  const [userID, setUserID] = useState('');
 
   const [loading, setLoading] = useState(false);
 
+  const clientsCollectionRef = collection(db, 'client');
+  const tailorsCollectionRef = collection(db, 'tailor');
+
   // console.log('taikor silice', tailorSlice);
+  // console.log('clients', tailorList);
+
+  // log
 
   // console.log(tailorSlice);
 
@@ -47,10 +59,16 @@ const Login = ({ navigation }: any) => {
   const [userEmail, setUserEmail] = useState('');
   const [comparedData, setComparedData] = useState('');
 
+  onAuthStateChanged(auth, (currentUser: any) => {
+    setUserEmail(currentUser.email);
+    setUserID(currentUser.uid);
+  });
+
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     defaultValues: {
       email: '',
@@ -58,48 +76,71 @@ const Login = ({ navigation }: any) => {
     },
   });
 
+  useEffect(() => {
+    const getTailors = async () => {
+      dispatch(stopButtonLoading());
+      const tailorData = await getDocs(tailorsCollectionRef);
+      setTailorList(
+        tailorData.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
+    };
+    dispatch(TailorsInfo(tailorList));
+    getTailors();
+
+    const getClients = async () => {
+      const clientData = await getDocs(clientsCollectionRef);
+      setClientList(
+        clientData.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
+    };
+
+    getClients();
+  }, []);
+
   const onSubmit = async (data: any) => {
     dispatch(setButtonLoading());
-    console.log(data.email);
+    // console.log(data.email);
+
+    // console.log(data);
 
     try {
-      if (data.email) {
-        const tailor = await signInWithEmailAndPassword(
-          auth,
-          data.email,
-          data.password
-        );
+      const user = await signInWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+      // console.log(auth?.currentUser?.uid);
 
-        console.log('ssasdw', tailor);
-
-        const tailorRef = collection(db, 'tailor');
-        onAuthStateChanged(auth, (currentUser: any) => {
-          setUserEmail(currentUser.email);
+      if (user) {
+        tailorList.map((tailor) => {
+          // console.log(tailor.user.id);
+          if (tailor.tailorID === auth?.currentUser?.uid) {
+            // dispatch(studentInfo(student));
+            // console.log("yes");
+            dispatch(TailorInfo(tailor));
+            navigation.navigate('HomeStack');
+          }
         });
 
-        console.log(userEmail);
+        clientList.map((client) => {
+          if (client.clientID === auth?.currentUser?.uid) {
+            dispatch(ClientInfo(client));
 
-        // Create a query against the collection.
-        const q = query(tailorRef, where('email', '==', userEmail));
-        setPresentUser(q);
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, ' => ', doc.data());
-          if (doc.data().tailor) {
-            dispatch(TailorInfo(doc.data()));
-            // console.log('some',doc.data().tailor);
+            // console.log("teacher", teacher.user.id);
 
-            // setShowModal(!showModal);
-            navigation.navigate('HomeStack');
-          } else {
             navigation.navigate('AvailableTailors');
           }
         });
-        // console.log('present user at the monet',q)
-        // console.log('a ref for tailor',tailorRef);
-        // console.log(' for tailor',tailor);
-        // navigation.navigate('HomeStack');
+        dispatch(stopButtonLoading());
+        // reset({
+        //   email: '',
+        //   password: '',
+        // });
+
+        // navigation.navigate("HomeStack");
+        // setLoading(!loading);/searchEngines
+      } else {
+        // setLoading(false);
       }
     } catch (error: any) {
       console.log(error.message);
@@ -109,6 +150,7 @@ const Login = ({ navigation }: any) => {
     // console.log(data);
     // navigation.navigate('HomeStack')
   };
+  dispatch(TailorsInfo(tailorList));
 
   const data = [
     { value: 'Apple', key: 1 },

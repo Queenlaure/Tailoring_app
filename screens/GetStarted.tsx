@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingTop: 50,
     backgroundColor: COLORS.white,
     fontFamily: 'Poppins',
   },
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    marginTop: 170,
+    marginTop: 190,
     fontWeight: 'bold',
     alignItems: 'center',
     textAlign: 'center',
@@ -106,6 +106,6 @@ const styles = StyleSheet.create({
   bluebtn: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 25,
+    marginTop: 35,
   },
 });

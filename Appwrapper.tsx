@@ -31,6 +31,8 @@ import SpecificOrderDetail from './screens/SpecificOrderDetail';
 import CustomerGallery from './screens/CustomerGallery';
 import GalleryDetails from './screens/GalleryDetails';
 import { TailorPersonalChat } from './screens/TailorPersonalChat';
+import { ClientPersonalChat } from './screens/ClientPersonalChat';
+import SetClientProfile from './screens/SetClientProfile';
 import HomeStack from './navigation/Homestack';
 import Provider from 'react-redux';
 import { store } from './store';
@@ -104,6 +106,11 @@ export default function Appwrapper() {
           <Stack.Screen
             name="Shirt"
             component={Shirt}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="SetClientProfile"
+            component={SetClientProfile}
             options={{ headerShown: false }}
           />
           <Stack.Screen
@@ -189,7 +196,13 @@ export default function Appwrapper() {
           <Stack.Screen
             name="TailorPersonalChat"
             component={TailorPersonalChat}
-            options={{ headerShown: false }}
+            options={{ title: '' }}
+          />
+          <Stack.Screen
+            name="ClientPersonalChat"
+            component={ClientPersonalChat}
+            options={{ title: '' }}
+            // options={{ headerShown: true }}
           />
 
           {/* <Stack.Screen name="Home" component={Home} options={{headerShown: false}} /> */}

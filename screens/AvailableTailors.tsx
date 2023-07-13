@@ -6,6 +6,7 @@ import {
   TextInput,
   Image,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { db, auth, storage } from '../firebase-config';
@@ -31,29 +32,30 @@ import Search from '../components/inputFields/Search';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
+import { onAuthStateChanged } from 'firebase/auth';
+import { ClientInfo } from '../store/client/clientSlice';
 
 const AvailableTailors = ({ navigation }: any) => {
   const dispatch = useDispatch();
   const tailorSlice = useSelector((state: RootState) => state.tailor);
   const [tailors, setTailors] = useState<any>([]);
   const [searchText, setSearchText] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [userID, setUserID] = useState('');
   const [filteredData, setFilteredData] = useState<TailorType[]>(
     [] as TailorType[]
   );
+  const clientSlice = useSelector((state: RootState) => state.client.user);
+  const [client, setClient] = useState<any>([]);
 
-  const tailorRef = collection(db, 'tailor');
+  // console.log(clientSlice);
 
-  useEffect(() => {
-    const getTailors = async () => {
-      const data = await getDocs(tailorRef);
-      setTailors(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    };
+  onAuthStateChanged(auth, (currentUser: any) => {
+    setUserEmail(currentUser.email);
+    setUserID(currentUser.uid);
+  });
 
-    dispatch(TailorsInfo(tailors));
-    dispatch(TailorInfo(tailors));
-
-    getTailors();
-  }, []);
+  // console.log(userEmail);
 
   const generateColor = () => {
     const randomColor = Math.floor(Math.random() * 16777215)
@@ -91,13 +93,47 @@ const AvailableTailors = ({ navigation }: any) => {
     }
   };
 
+  // useEffect(() => {
+  //   // console.log('Helloooooo there ', ordersSlice);
+
+  //   const timeout = setTimeout(() => {
+  //     const getClient = async () => {
+  //       try {
+  //         const clientsRef = collection(db, 'client');
+  //         const q = query(
+  //           clientsRef,
+
+  //           where('clientEmail', '==', userEmail)
+  //         );
+
+  //         const querySnapshot = await getDocs(q);
+  //         // console.log(querySnapshot);
+
+  //         setClient(
+  //           querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+  //         );
+
+  //         dispatch(ClientInfo(client[0]));
+  //       } catch (error: any) {
+  //         console.log(error.message);
+  //       }
+  //     };
+
+  //     getClient();
+  //   }, 2000);
+
+  //   return () => clearTimeout(timeout);
+  // }, []);
+
+  console.log('aSAs', clientSlice);
+
   return (
     <View
       style={{
         flex: 1,
         backgroundColor: COLORS.white,
         // paddingHorizontal: 30,
-        paddingTop: 45,
+        paddingTop: 55,
         // alignItems: 'center',
       }}
     >
@@ -128,7 +164,7 @@ const AvailableTailors = ({ navigation }: any) => {
           ></View>
           <ScrollView showsVerticalScrollIndicator={false}>
             {filteredData.map((tailor: TailorType, index: any) => (
-              <View>
+              <View key={index}>
                 <TouchableOpacity
                   // key={index}
                   activeOpacity={0.8}
@@ -201,9 +237,11 @@ const AvailableTailors = ({ navigation }: any) => {
                       </TouchableOpacity>
                       <TouchableOpacity
                         activeOpacity={0.8}
-                        //  onPress={() => {
-                        //    toggleDropdown(renderDropdown);
-                        //  }}
+                        onPress={() =>
+                          navigation.navigate('ClientPersonalChat', {
+                            tailor: tailor,
+                          })
+                        }
                       >
                         <MaterialIcons
                           name="chat"
@@ -242,108 +280,113 @@ const AvailableTailors = ({ navigation }: any) => {
             }}
           ></View>
 
-          <ScrollView showsVerticalScrollIndicator={false}>
-            {tailorSlice.users.map((tailor: TailorType, index: any) => (
-              <View>
-                <TouchableOpacity
-                  key={index}
-                  activeOpacity={0.8}
-                  // onPress={() => navigation.navigate('SpecificOrderDetail')}
-                  style={style.cardSection}
-                >
-                  <View style={{ display: 'flex', flexDirection: 'row' }}>
-                    <View
-                      style={{
-                        width: 60,
-                        height: 60,
-                        backgroundColor: generateColor(),
-                        borderRadius: 50,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
-                    >
-                      {/* <Image
+          <SafeAreaView>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {tailorSlice.users.map((tailor: TailorType, index: any) => (
+                <View key={index}>
+                  <TouchableOpacity
+                    key={index}
+                    activeOpacity={0.8}
+                    style={style.cardSection}
+                  >
+                    <View style={{ display: 'flex', flexDirection: 'row' }}>
+                      <View
+                        style={{
+                          width: 60,
+                          height: 60,
+                          backgroundColor: generateColor(),
+                          borderRadius: 50,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
+                        {/* <Image
                    source={{
                      uri: order.imageUrl,
                    }}
                    style={style.pic}
                  /> */}
-                      <Text style={style.initial}>
-                        {/* {tailorSlice?.user?.shopName?.charAt(0)} */}
-                        {tailor.shopName?.charAt(0)}
-                      </Text>
-                    </View>
-                    <View style={{ justifyContent: 'center', paddingLeft: 9 }}>
-                      <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-                        {tailor.shopName}
-                      </Text>
-                      <Text style={{ fontSize: 13, color: COLORS.darkGrey }}>
-                        {tailor.address}
-                      </Text>
-                      <Text style={{ fontSize: 13, color: COLORS.darkGrey }}>
-                        wears for:{' '}
-                        <Text style={{ fontSize: 14, color: COLORS.green }}>
-                          {tailor.specialty}
+                        <Text style={style.initial}>
+                          {/* {tailorSlice?.user?.shopName?.charAt(0)} */}
+                          {tailor.shopName?.charAt(0)}
                         </Text>
+                      </View>
+                      <View
+                        style={{ justifyContent: 'center', paddingLeft: 9 }}
+                      >
+                        <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
+                          {tailor.shopName}
+                        </Text>
+                        <Text style={{ fontSize: 13, color: COLORS.darkGrey }}>
+                          {tailor.address}
+                        </Text>
+                        <Text style={{ fontSize: 13, color: COLORS.darkGrey }}>
+                          wears for:{' '}
+                          <Text style={{ fontSize: 14, color: COLORS.green }}>
+                            {tailor.specialty}
+                          </Text>
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={{}}>
+                      <View
+                        style={{
+                          // alignItems: 'flex-end',
+                          // justifyContent: 'flex-end',
+                          display: 'flex',
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          marginBottom: 23,
+                        }}
+                      >
+                        <TouchableOpacity
+                          activeOpacity={0.8}
+                          onPress={() =>
+                            navigation.navigate('CustomerGallery', {
+                              email: tailor.email,
+                            })
+                          }
+                        >
+                          <MaterialCommunityIcons
+                            name="view-gallery"
+                            size={18}
+                            // color={COLORS.darkGrey}
+                            color="grey"
+                          />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          activeOpacity={0.8}
+                          onPress={() =>
+                            navigation.navigate('ClientPersonalChat', {
+                              tailor: tailor,
+                            })
+                          }
+                        >
+                          <MaterialIcons
+                            name="chat"
+                            size={18}
+                            // color={COLORS.blue}
+                            color="red"
+                          />
+                        </TouchableOpacity>
+                      </View>
+                      <Text style={{ fontSize: 13, color: COLORS.blue }}>
+                        {tailor.contact}
                       </Text>
                     </View>
-                  </View>
-                  <View style={{}}>
-                    <View
-                      style={{
-                        // alignItems: 'flex-end',
-                        // justifyContent: 'flex-end',
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        marginBottom: 23,
-                      }}
-                    >
-                      <TouchableOpacity
-                        activeOpacity={0.8}
-                        onPress={() =>
-                          navigation.navigate('CustomerGallery', {
-                            email: tailor.email,
-                          })
-                        }
-                      >
-                        <MaterialCommunityIcons
-                          name="view-gallery"
-                          size={18}
-                          // color={COLORS.darkGrey}
-                          color="grey"
-                        />
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        activeOpacity={0.8}
-                        //  onPress={() => {
-                        //    toggleDropdown(renderDropdown);
-                        //  }}
-                      >
-                        <MaterialIcons
-                          name="chat"
-                          size={18}
-                          // color={COLORS.blue}
-                          color="red"
-                        />
-                      </TouchableOpacity>
-                    </View>
-                    <Text style={{ fontSize: 13, color: COLORS.blue }}>
-                      {tailor.contact}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-                <View
-                  style={{
-                    width: '100%',
-                    height: 1,
-                    backgroundColor: COLORS.lightGrey,
-                    marginTop: 20,
-                  }}
-                ></View>
-              </View>
-            ))}
-          </ScrollView>
+                  </TouchableOpacity>
+                  <View
+                    style={{
+                      width: '100%',
+                      height: 1,
+                      backgroundColor: COLORS.lightGrey,
+                      marginTop: 20,
+                    }}
+                  ></View>
+                </View>
+              ))}
+            </ScrollView>
+          </SafeAreaView>
         </View>
       )}
     </View>
@@ -406,3 +449,6 @@ const style = StyleSheet.create({
 });
 
 export default AvailableTailors;
+function clientsInfo(orders: any): any {
+  throw new Error('Function not implemented.');
+}
