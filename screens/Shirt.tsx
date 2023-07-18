@@ -24,9 +24,14 @@ import { db, auth, storage } from '../firebase-config';
 import * as ImagePicker from 'expo-image-picker';
 import { getDoc, collection, addDoc, updateDoc, doc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store';
 import CustomModalText from '../components/modals/CustomModalText';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store';
+import {
+  setButtonLoading,
+  stopButtonLoading,
+} from '../store/loading/buttonSlice';
+import DateInput from '../components/inputFields/DateInput.component';
 
 const width = Dimensions.get('screen').width / 2 - 30;
 
@@ -37,6 +42,8 @@ interface Props {
 }
 
 const Shirt = ({ route, userOption, navigation }: Props) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const { selectedUserOption, customer } = route.params;
 
   const tailorSlice = useSelector((state: RootState) => state.tailor);
@@ -45,6 +52,9 @@ const Shirt = ({ route, userOption, navigation }: Props) => {
   const [completed, setCompleted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [images, setImages] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
+  const buttonSlice = useSelector((state: RootState) => state.button);
+  const [date, setDate] = useState(new Date(Date.now()));
 
   const [showModal, setShowModal] = useState(false);
 
@@ -75,6 +85,7 @@ const Shirt = ({ route, userOption, navigation }: Props) => {
   const onSubmit = async (data: any) => {
     // console.log('hello');
     const ordersCollectionRef = collection(db, 'orders');
+    dispatch(setButtonLoading());
 
     try {
       const blob: any = await new Promise((resolve, reject) => {
@@ -108,6 +119,7 @@ const Shirt = ({ route, userOption, navigation }: Props) => {
         urgent: urgent,
         completed: completed,
         customerName: customer,
+        dueDate: date,
       }).then((response) => {
         console.log(response.id);
         const imageRef = ref(storage, `orders/${response.id}`);
@@ -124,6 +136,7 @@ const Shirt = ({ route, userOption, navigation }: Props) => {
             imageUrl: downloadURL,
           });
           blob.close();
+          dispatch(stopButtonLoading());
           setShowModal(!showModal);
           console.log('Hello THere', showModal);
         });
@@ -185,7 +198,7 @@ const Shirt = ({ route, userOption, navigation }: Props) => {
         flex: 1,
         backgroundColor: COLORS.white,
         // paddingHorizontal: 30,
-        paddingTop: 55,
+        paddingTop: 65,
         paddingBottom: 70,
         alignItems: 'center',
       }}
@@ -292,6 +305,11 @@ const Shirt = ({ route, userOption, navigation }: Props) => {
           {errors.charge && (
             <NativeUIText textColor="red">charge is requuired</NativeUIText>
           )}
+
+          <View>
+            <DateInput date={date} setDate={setDate} />
+            {/* <Calendar /> */}
+          </View>
           {/* <GreyInputField label="Chest:" />
           <GreyInputField label="Waist:" />
           <GreyInputField label="Seat:" />
@@ -357,7 +375,11 @@ const Shirt = ({ route, userOption, navigation }: Props) => {
             </View>
           </View>
           <View style={{ marginTop: 30 }}>
-            <BlueButton text="Save" onClickButton={handleSubmit(onSubmit)} />
+            <BlueButton
+              text="Save"
+              onClickButton={handleSubmit(onSubmit)}
+              isLoading={buttonSlice.buttonLoading}
+            />
           </View>
         </ScrollView>
         <View>

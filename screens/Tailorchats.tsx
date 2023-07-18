@@ -91,6 +91,13 @@ const TailorChats = ({ navigation }: any) => {
     },
   ];
 
+  const generateColor = () => {
+    const randomColor = Math.floor(Math.random() * 16777215)
+      .toString(16)
+      .padStart(6, '0');
+    return `#${randomColor}`;
+  };
+
   useEffect(() => {
     // console.log('Helloooooo there ', ordersSlice);
 
@@ -130,7 +137,7 @@ const TailorChats = ({ navigation }: any) => {
       style={{
         flex: 1,
         backgroundColor: COLORS.white,
-        // paddingHorizontal: 30,
+        paddingHorizontal: 10,
         paddingTop: 45,
         alignItems: 'center',
       }}
@@ -152,8 +159,31 @@ const TailorChats = ({ navigation }: any) => {
               style={styles.Card}
             >
               <View style={styles.UserInfo}>
-                <View style={styles.UserImgWrapper}>
-                  {/* <Image source={item.userImg} style={styles.UserImg} /> */}
+                {/* <View style={styles.UserImgWrapper}>
+                  <Image source={item.userImg} style={styles.UserImg} />
+                </View> */}
+                <View
+                  style={{
+                    width: 50,
+                    height: 50,
+                    backgroundColor: generateColor(),
+                    borderRadius: 50,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginTop: 10,
+                    marginLeft: 20,
+                  }}
+                >
+                  {/* <Image
+                   source={{
+                     uri: order.imageUrl,
+                   }}
+                   style={style.pic}
+                 /> */}
+                  <Text style={styles.initial}>
+                    {/* {tailorSlice?.user?.shopName?.charAt(0)} */}
+                    {item.clientName?.charAt(0)}
+                  </Text>
                 </View>
                 <View style={styles.TextSection}>
                   <View style={styles.UserInfoText}>
@@ -192,6 +222,8 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     alignItems: 'center',
     backgroundColor: '#ffffff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#cccccc',
   },
   Container: {
     width: '100%',
@@ -216,8 +248,6 @@ const styles = StyleSheet.create({
     paddingLeft: 0,
     marginLeft: 10,
     width: 300,
-    borderBottomWidth: 1,
-    borderBottomColor: '#cccccc',
   },
   UserInfoText: {
     flexDirection: 'row',
@@ -235,5 +265,11 @@ const styles = StyleSheet.create({
   MessageText: {
     fontSize: 14,
     color: '#333333',
+  },
+  initial: {
+    color: 'white',
+    fontSize: 30,
+    fontWeight: 'bold',
+    // padding: 10,
   },
 });

@@ -5,57 +5,105 @@ import {
   StyleSheet,
   Image,
   Button,
+  Platform,
   TouchableOpacity,
   Pressable,
   TextInput,
 } from 'react-native';
 import { COLORS } from '../../utils/colors';
 import { Ionicons } from '@expo/vector-icons';
+import { Controller } from 'react-hook-form';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface Props {
   label?: string;
   placeholder?: string;
-
+  control?: any;
+  name: string;
+  onChangeText?: () => void;
 }
 
-const Calendar = ({ label, placeholder }: Props) => {
+const Calendar = ({
+  label,
+  placeholder,
+  control,
+  name,
+  onChangeText,
+}: Props) => {
   const [showPassword, setShowPassword] = useState(true);
   const [showPicker, setShowPicker] = useState(false);
   const [date, setDate] = useState(new Date());
+  const [dueDate, setDeuDate] = useState('');
 
-    const toggleDatePicker = () => {
-        setShowPicker(!showPicker);
+  const toggleDatePicker = () => {
+    setShowPicker(!showPicker);
+  };
+  const onChange = ({ type }: any, selectedDate: any) => {
+    if (type == 'set') {
+      const currentDate = selectedDate;
+      setDate(currentDate);
+
+      if (Platform.OS === 'android') {
+        toggleDatePicker();
+        setDeuDate(currentDate.toDateString());
+      }
+    } else {
+      toggleDatePicker();
     }
-    const onChange = ({type}:any, selectedDate: any) => {
-        if (type == "set") {
-            const currentDate=selectedDate;
-            setDate(currentDate);
-        } else {
-            toggleDatePicker()
-        }
-    }
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
-      <View style={styles.inputContainer}>
-        <TextInput placeholder={placeholder} style={styles.placeholder} editable={false} />
-        <View>
-          <View>
-            {showPicker && <DateTimePicker mode='date' display='spinner' value={date} onChange={onChange} />}
-            {!showPicker && <Pressable onPress={toggleDatePicker}>
-            <Ionicons
-              name='calendar-sharp'
-              size={20}
-              style={styles.eye}
-            />
-            </Pressable>}
-            
+    <Controller
+      control={control}
+      rules={{
+        required: true,
+      }}
+      render={({ field: { onBlur, value } }) => (
+        <View style={styles.container}>
+          <Text style={styles.label}>Due date:</Text>
+          <View style={styles.inputContainer}>
+            {showPicker && (
+              <DateTimePicker
+                mode="date"
+                display="spinner"
+                value={date}
+                onChange={onChange}
+              />
+            )}
+            {!showPicker && (
+              <Pressable
+                style={{ display: 'flex', flexDirection: 'row' }}
+                onPress={toggleDatePicker}
+              >
+                <TextInput
+                  placeholder={placeholder}
+                  style={styles.placeholder}
+                  editable={false}
+                  value={dueDate}
+                  onChangeText={setDeuDate}
+                />
+                <Ionicons name="calendar-sharp" size={20} style={styles.eye} />
+              </Pressable>
+            )}
+
+            {/* <View>
+            <View>
+              {showPicker && <DateTimePicker mode='date' display='spinner' value={date} onChange={onChange} />}
+              {!showPicker && <Pressable onPress={toggleDatePicker}>
+              <Ionicons
+                name='calendar-sharp'
+                size={20}
+                style={styles.eye}
+              />
+              </Pressable>}
+              
+            </View>
+          </View> */}
           </View>
         </View>
-      </View>
-    </View>
+      )}
+      name={name}
+    />
   );
 };
 
@@ -88,7 +136,7 @@ const styles = StyleSheet.create({
     width: 280,
   },
   container: {
-    marginTop: 20,
+    marginTop: 15,
   },
   eye: {
     marginRight: 18,

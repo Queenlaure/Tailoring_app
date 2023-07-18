@@ -17,6 +17,7 @@ import {
   where,
   doc,
   updateDoc,
+  Timestamp,
 } from 'firebase/firestore';
 import { db } from '../firebase-config';
 import { useSelector, useDispatch } from 'react-redux';
@@ -50,6 +51,11 @@ const Orders = ({ navigation }: any) => {
         console.log(error);
       });
   };
+
+  // const timeObj = new Timestamp();
+
+  // console.log(timeObj instanceof Timestamp)
+  // console.log(timeObj.toDate());
 
   const CategoryList = () => {
     return (
@@ -88,7 +94,17 @@ const Orders = ({ navigation }: any) => {
   const ordersSlice = useSelector((state: RootState) => state.orders);
 
   // console.log('queens', filteredData);
-  // console.log('queens', customers);
+  // console.log('queens', ordersSlice.orders[0].dueDate);
+  const edit = new Date(
+    ordersSlice?.orders[0]?.dueDate.seconds * 1000
+  ).toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  // console.log(edit);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -318,7 +334,16 @@ const Orders = ({ navigation }: any) => {
                           : ''}
                       </Text>
                       <Text style={{ fontSize: 13, color: COLORS.lightBrown }}>
-                        Due: 30/08/2023
+                        {/* {new Date(order.dueDate?.seconds * 1000)} */}
+                        {/* {order.dueDate} */}
+                        {new Date(
+                          order?.dueDate.seconds * 1000
+                        ).toLocaleDateString('en-US', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
                       </Text>
                     </View>
                     <TouchableOpacity
@@ -507,7 +532,7 @@ const Orders = ({ navigation }: any) => {
                           : ''}
                       </Text>
                       <Text style={{ fontSize: 13, color: COLORS.lightBrown }}>
-                        Due: 30/08/2023
+                        Due: 30/08/202
                       </Text>
                     </View>
                   </TouchableOpacity>

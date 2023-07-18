@@ -1,4 +1,10 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import React, { useState } from 'react';
 import SelectItemRadioBtn from '../components/buttons/SelectItemRadioBtn';
 import { COLORS } from '../utils/colors';
@@ -48,37 +54,46 @@ const SelectItem = ({ navigation, route }: Props) => {
       style={{
         flex: 1,
         backgroundColor: COLORS.lightestGrey,
-        paddingHorizontal: 30,
+        // paddingHorizontal: 20,
         paddingTop: 65,
         alignItems: 'center',
       }}
     >
       <Text style={styles.heading}>Select Item</Text>
 
-      <SelectItemRadioBtn
-        setUserOption={setUserOption}
-        userOption={userOption}
-        data={data}
-      />
-
-      <TouchableOpacity
-        style={{
-          backgroundColor: COLORS.blue,
-          width: 120,
-          height: 50,
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginTop: 15,
-          flexDirection: 'row',
-          borderRadius: 10,
-        }}
-        onPress={handleNextPress}
-      >
-        <Text style={{ color: COLORS.white, fontSize: 18, fontWeight: 'bold' }}>
-          Next
-        </Text>
-        <Entypo name="controller-next" size={26} color={COLORS.white} />
-      </TouchableOpacity>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <SelectItemRadioBtn
+          setUserOption={setUserOption}
+          userOption={userOption}
+          data={data}
+        />
+        <View
+          style={{
+            alignItems: 'center',
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              backgroundColor: COLORS.blue,
+              width: 120,
+              height: 50,
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: 15,
+              flexDirection: 'row',
+              borderRadius: 10,
+            }}
+            onPress={handleNextPress}
+          >
+            <Text
+              style={{ color: COLORS.white, fontSize: 18, fontWeight: 'bold' }}
+            >
+              Next
+            </Text>
+            <Entypo name="controller-next" size={26} color={COLORS.white} />
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 };
