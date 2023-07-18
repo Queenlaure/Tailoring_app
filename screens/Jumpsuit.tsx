@@ -23,9 +23,14 @@ import * as ImagePicker from 'expo-image-picker';
 import { db, auth, storage } from '../firebase-config';
 import { getDoc, collection, addDoc, updateDoc, doc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store';
 import CustomModalText from '../components/modals/CustomModalText';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store';
+import {
+  setButtonLoading,
+  stopButtonLoading,
+} from '../store/loading/buttonSlice';
+import Calendar from '../components/inputFields/Calendar';
 
 const width = Dimensions.get('screen').width / 2 - 30;
 
@@ -36,6 +41,8 @@ interface Props {
 }
 
 const Jumpsuit = ({ route, userOption, navigation }: Props) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const { selectedUserOption, customer } = route.params;
 
   const tailorSlice = useSelector((state: RootState) => state.tailor);
@@ -44,6 +51,8 @@ const Jumpsuit = ({ route, userOption, navigation }: Props) => {
   const [completed, setCompleted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [images, setImages] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
+  const buttonSlice = useSelector((state: RootState) => state.button);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -73,6 +82,7 @@ const Jumpsuit = ({ route, userOption, navigation }: Props) => {
   const onSubmit = async (data: any) => {
     // console.log('hello');
     const ordersCollectionRef = collection(db, 'orders');
+    dispatch(setButtonLoading());
 
     try {
       const blob: any = await new Promise((resolve, reject) => {
@@ -121,6 +131,7 @@ const Jumpsuit = ({ route, userOption, navigation }: Props) => {
             imageUrl: downloadURL,
           });
           blob.close();
+          dispatch(stopButtonLoading());
           setShowModal(!showModal);
         });
         // .then(navigation.navigate('HomeStack'));
@@ -175,7 +186,7 @@ const Jumpsuit = ({ route, userOption, navigation }: Props) => {
         flex: 1,
         backgroundColor: COLORS.white,
         // paddingHorizontal: 30,
-        paddingTop: 35,
+        paddingTop: 65,
         paddingBottom: 70,
         alignItems: 'center',
       }}
@@ -276,6 +287,9 @@ const Jumpsuit = ({ route, userOption, navigation }: Props) => {
             </NativeUIText>
           )}
           <View>
+            <Calendar />
+          </View>
+          <View>
             <UrgentCheckBox setUrgent={setUrgent} />
           </View>
           <View style={styles.picSection}>
@@ -329,7 +343,11 @@ const Jumpsuit = ({ route, userOption, navigation }: Props) => {
             </View>
           </View>
           <View style={{ marginTop: 30 }}>
-            <BlueButton text="Save" onClickButton={handleSubmit(onSubmit)} />
+            <BlueButton
+              text="Save"
+              onClickButton={handleSubmit(onSubmit)}
+              isLoading={buttonSlice.buttonLoading}
+            />
           </View>
         </ScrollView>
         <View>

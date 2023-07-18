@@ -35,7 +35,9 @@ const Home = ({ navigation }: any) => {
   const dispatch = useDispatch();
   const [orders, setOrders] = useState<any>([]);
   const tailorSlice = useSelector((state: RootState) => state.tailor);
-  // const ordersSlice = useSelector((state: RootState) => state.orders);
+  const ordersSlice = useSelector((state: RootState) => state.orders);
+
+  // console.log(ordersSlice);
 
   const generateColor = () => {
     const randomColor = Math.floor(Math.random() * 16777215)

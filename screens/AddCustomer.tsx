@@ -27,12 +27,18 @@ import {
   uploadBytes,
   uploadBytesResumable,
 } from 'firebase/storage';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store';
+import {
+  setButtonLoading,
+  stopButtonLoading,
+} from '../store/loading/buttonSlice';
+import Calendar from '../components/inputFields/Calendar';
 
 const width = Dimensions.get('screen').width / 2 - 30;
 
 const AddCustomer = ({ navigation }: any) => {
+  const dispatch = useDispatch<AppDispatch>();
   const tailorSlice = useSelector((state: RootState) => state.tailor);
 
   const [userRole, setUserRole] = useState('');
@@ -41,6 +47,8 @@ const AddCustomer = ({ navigation }: any) => {
   const [checked, setChecked] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [newCreatedID, setNewCreatedID] = useState<any>('');
+  const [loading, setLoading] = useState(false);
+  const buttonSlice = useSelector((state: RootState) => state.button);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -63,7 +71,7 @@ const AddCustomer = ({ navigation }: any) => {
   const onSubmit = async (data: any) => {
     console.log('hello');
     const studentCollectionRef = collection(db, 'customers');
-
+    dispatch(setButtonLoading());
     try {
       const blob: any = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
@@ -105,6 +113,7 @@ const AddCustomer = ({ navigation }: any) => {
         });
         // .then(navigation.navigate('HomeStack'));
         setNewCreatedID(response.id);
+        dispatch(stopButtonLoading());
         setShowModal(!showModal);
       });
 
@@ -157,7 +166,7 @@ const AddCustomer = ({ navigation }: any) => {
         flex: 1,
         backgroundColor: COLORS.white,
         paddingHorizontal: 30,
-        paddingTop: 55,
+        paddingTop: 60,
       }}
     >
       <View style={{ alignItems: 'center' }}>
@@ -296,7 +305,11 @@ const AddCustomer = ({ navigation }: any) => {
         </ScrollView>
       </View>
       <View style={{ alignItems: 'center', marginTop: 10 }}>
-        <BlueButton text="Save" onClickButton={handleSubmit(onSubmit)} />
+        <BlueButton
+          text="Save"
+          onClickButton={handleSubmit(onSubmit)}
+          isLoading={buttonSlice.buttonLoading}
+        />
       </View>
 
       <View>
@@ -365,3 +378,6 @@ const styles = StyleSheet.create({
     // marginTop: 26,
   },
 });
+function dispatch(arg0: any) {
+  throw new Error('Function not implemented.');
+}

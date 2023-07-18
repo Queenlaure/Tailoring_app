@@ -120,6 +120,7 @@ export interface OrdersType {
   completed?: boolean;
   imageUrl: string;
   id: string;
+  dueDate: timeType;
   shirt?: Shirt;
   gown?: Gown;
   agbada?: Agbada;
@@ -128,6 +129,11 @@ export interface OrdersType {
   suit?: Suit;
   jacket?: Jacket;
   blouse?: Blouse;
+}
+
+interface timeType {
+  nanoseconds: number;
+  seconds: number;
 }
 interface OrdersState {
   orders: OrdersType[];
