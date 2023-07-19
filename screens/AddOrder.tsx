@@ -145,6 +145,7 @@ const AddOrder = ({ navigation }: any) => {
             {customersSlice.map((customer, index) => {
               return (
                 <TouchableOpacity
+                  key={index}
                   style={styles.clientName}
                   activeOpacity={0.8}
                   onPress={() =>

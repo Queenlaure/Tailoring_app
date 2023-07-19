@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, Button, Platform } from 'react-native';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { COLORS } from '../../utils/colors';
 
 const DateInput = ({
   date,
@@ -34,7 +35,11 @@ const DateInput = ({
       {/* The button that used to trigger the date picker */}
       {!isPickerShow && (
         <View style={styles.btnContainer}>
-          <Button title="Show Picker" color="purple" onPress={showPicker} />
+          <Button
+            title="Select Date"
+            color={COLORS.blue}
+            onPress={showPicker}
+          />
         </View>
       )}
 
