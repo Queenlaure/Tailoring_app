@@ -31,6 +31,7 @@ import {
 } from '../store/loading/buttonSlice';
 import { TailorType } from '../store/tailor/tailorSlice';
 import { ClientInfo } from '../store/client/clientSlice';
+import { ordersInfo } from '../store/orders/ordersSlice';
 
 const Login = ({ navigation }: any) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -39,13 +40,16 @@ const Login = ({ navigation }: any) => {
   // const [showModal, setShowModal] = useState(false);
   const [tailorList, setTailorList] = useState<TailorType[] | any[]>([]);
   const [clientList, setClientList] = useState<any[]>([]);
+  const [orderList, setOrderList] = useState<any[]>([]);
   const [specificUser, setSpecificUser] = useState<any[]>([]);
   const [userID, setUserID] = useState('');
+  const [orders, setOrders] = useState<any>(false);
 
   const [loading, setLoading] = useState(false);
 
   const clientsCollectionRef = collection(db, 'client');
   const tailorsCollectionRef = collection(db, 'tailor');
+  const ordersCollectionRef = collection(db, 'orders');
 
   // console.log('taikor silice', tailorSlice);
   // console.log('clients', tailorList);
@@ -76,6 +80,8 @@ const Login = ({ navigation }: any) => {
     },
   });
 
+  // console.log(userEmail);
+
   useEffect(() => {
     const getTailors = async () => {
       dispatch(stopButtonLoading());
@@ -95,7 +101,58 @@ const Login = ({ navigation }: any) => {
     };
 
     getClients();
+
+    const getOrders = async () => {
+      const OrderData = await getDocs(ordersCollectionRef);
+      setOrderList(
+        OrderData.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
+    };
+
+    getOrders();
   }, []);
+
+  // useEffect(() => {
+  //   const timeout = setTimeout(() => {
+  //     const getOrders = async () => {
+  //       try {
+  //         // Create a query against the collection.
+  //         const ordersRef = collection(db, 'orders');
+  //         const q = query(
+  //           ordersRef,
+
+  //           where('tailorEmail', '==', userEmail)
+  //         );
+
+  //         const querySnapshot = await getDocs(q);
+  //         // console.log(querySnapshot);
+
+  //         setOrders(
+  //           querySnapshot.docs.map((doc) => ({
+  //             ...doc.data(),
+  //             id: doc.id,
+  //           }))
+  //         );
+
+  //         console.log('sadas', orders);
+
+  //         dispatch(ordersInfo(orders));
+
+  //         // });
+  //       } catch (error: any) {
+  //         console.log(error.message);
+  //         // setFirebaseErr(error.message);
+  //       }
+  //     };
+  //     getOrders();
+  //   }, 2500);
+
+  //   return () => clearTimeout(timeout);
+
+  //   // console.log('Helloooooo there ', ordersSlice);
+  // }, []);
+
+  const emptyArray: any = [];
 
   const onSubmit = async (data: any) => {
     dispatch(setButtonLoading());
@@ -117,7 +174,14 @@ const Login = ({ navigation }: any) => {
           if (tailor.tailorID === auth?.currentUser?.uid) {
             // dispatch(studentInfo(student));
             // console.log("yes");
+            // orderList.map((order) => {
+            //   if (order.tailorEmail === tailor.email) {
+            //     emptyArray.push(order);
+            //   }
+            // });
+
             dispatch(TailorInfo(tailor));
+
             navigation.navigate('HomeStack');
           }
         });
@@ -157,6 +221,11 @@ const Login = ({ navigation }: any) => {
     { value: 'Samsung', key: 2 },
     { value: 'Blackberry', key: 3 },
   ];
+
+  // console.log(orderList);
+  // console.log(emptyArray);
+
+  // dispatch(ordersInfo(emptyArray));
 
   return (
     <SafeAreaView

@@ -25,7 +25,10 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { db } from '../firebase-config';
-import { OrdersType, ordersInfo } from '../store/orders/ordersSlice';
+import ordersSlice, {
+  OrdersType,
+  ordersInfo,
+} from '../store/orders/ordersSlice';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import CarouselCards from '../components/carousel/CarouselCard';
 
@@ -35,9 +38,51 @@ const Home = ({ navigation }: any) => {
   const dispatch = useDispatch();
   const [orders, setOrders] = useState<any>([]);
   const tailorSlice = useSelector((state: RootState) => state.tailor);
-  const ordersSlice = useSelector((state: RootState) => state.orders);
+  // const ordersSlice = useSelector((state: RootState) => state.orders);
 
-  // console.log(ordersSlice);
+  // const [orders, setOrders] = useState<any>([]);
+
+  // console.log('qwqq', tailorSlice.user.email);
+
+  // useEffect(() => {
+  //   const timeout = setTimeout(() => {
+  //     const getOrders = async () => {
+  //       try {
+  //         // Create a query against the collection.
+  //         const ordersRef = collection(db, 'orders');
+  //         const q = query(
+  //           ordersRef,
+
+  //           where('tailorEmail', '==', tailorSlice.user.email)
+  //         );
+
+  //         const querySnapshot = await getDocs(q);
+  //         // console.log(querySnapshot);
+
+  //         setOrders(
+  //           querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+  //         );
+
+  //         dispatch(ordersInfo(orders));
+
+  //         // });
+  //       } catch (error: any) {
+  //         console.log(error.message);
+  //         // setFirebaseErr(error.message);
+  //       }
+  //     };
+
+  //     // console.log('Helloooooo there ', ordersSlice);
+
+  //     getOrders();
+  //   }, 2500);
+
+  //   return () => clearTimeout(timeout);
+  // }, [ordersSlice]);
+
+  // console.log('sadsa', ordersSlice);
+
+  // console.log('hi');
 
   const generateColor = () => {
     const randomColor = Math.floor(Math.random() * 16777215)

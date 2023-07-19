@@ -58,6 +58,7 @@ export default function Appwrapper() {
   }
 
   const Stack = createNativeStackNavigator();
+
   return (
     <>
       <NavigationContainer>

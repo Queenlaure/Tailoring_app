@@ -7,8 +7,9 @@ import {
   Dimensions,
   TouchableOpacity,
   Pressable,
+  Platform,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { COLORS } from '../utils/colors';
 import MainHeading from '../components/headings/MainHeading';
 import InputField from '../components/inputFields/InputField';
@@ -31,6 +32,17 @@ import {
   stopButtonLoading,
 } from '../store/loading/buttonSlice';
 import Calendar from '../components/inputFields/Calendar';
+import DateInput from '../components/inputFields/DateInput.component';
+import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 const width = Dimensions.get('screen').width / 2 - 30;
 
@@ -53,6 +65,11 @@ const Pants = ({ route, userOption, navigation }: Props) => {
   const [images, setImages] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   const buttonSlice = useSelector((state: RootState) => state.button);
+  const [date, setDate] = useState(new Date(Date.now()));
+  const [expoPushToken, setExpoPushToken] = useState<any>('');
+  const [notification, setNotification] = useState<any>(false);
+  const notificationListener = useRef<any>();
+  const responseListener = useRef<any>();
 
   const [showModal, setShowModal] = useState(false);
 
@@ -81,6 +98,29 @@ const Pants = ({ route, userOption, navigation }: Props) => {
       charge: '',
     },
   });
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
 
   const onSubmit = async (data: any) => {
     // console.log('hello');
@@ -140,6 +180,7 @@ const Pants = ({ route, userOption, navigation }: Props) => {
           blob.close();
           dispatch(stopButtonLoading());
           setShowModal(!showModal);
+          schedulePushNotification();
         });
         // .then(navigation.navigate('HomeStack'));
         setNewCreatedID(response.id);
@@ -189,6 +230,17 @@ const Pants = ({ route, userOption, navigation }: Props) => {
       console.log(result.assets);
     }
   };
+
+  async function schedulePushNotification() {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'TailorEazy ✂️',
+        body: `${customer} order is due tommorow`,
+        data: { data: 'goes here' },
+      },
+      trigger: { seconds: 2 },
+    });
+  }
 
   return (
     <View
@@ -314,7 +366,8 @@ const Pants = ({ route, userOption, navigation }: Props) => {
             <NativeUIText textColor="red">charge is required</NativeUIText>
           )}
           <View>
-            <Calendar />
+            <DateInput date={date} setDate={setDate} />
+            {/* <Calendar /> */}
           </View>
           <View>
             <UrgentCheckBox setUrgent={setUrgent} />
@@ -396,6 +449,39 @@ const Pants = ({ route, userOption, navigation }: Props) => {
 };
 
 export default Pants;
+
+async function registerForPushNotificationsAsync() {
+  let token;
+
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(token);
+  } else {
+    alert('Must use physical device for Push Notifications');
+  }
+
+  return token;
+}
 
 const styles = StyleSheet.create({
   // cameraContainer: {

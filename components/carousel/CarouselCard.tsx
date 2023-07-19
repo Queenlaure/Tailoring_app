@@ -23,8 +23,55 @@ const CarouselCards = () => {
   const isCarousel = React.useRef(null);
 
   const [orders, setOrders] = useState<any>([]);
+  const [trigger, setTrigger] = useState(false);
+  // const [tigger, settigger] = useState(false);
   const tailorSlice = useSelector((state: RootState) => state.tailor);
   const ordersSlice = useSelector((state: RootState) => state.orders);
+
+  // useEffect(() => {
+  //   const timeout = setTimeout(() => {
+  //     const getOrders = async () => {
+  //       try {
+  //         // Create a query against the collection.
+  //         const ordersRef = collection(db, 'orders');
+  //         const q = query(
+  //           ordersRef,
+  //           // where('tailorEmail', '==', tailorSlice.user.email)
+  //           where('tailorEmail', '==', tailorSlice.user.email)
+  //         );
+
+  //         const querySnapshot = await getDocs(q);
+  //         // console.log(querySnapshot);
+
+  //         setOrders(
+  //           querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+  //         );
+
+  //         dispatch(ordersInfo(orders));
+  //         // console.log('queens', customers);
+
+  //         // querySnapshot.docs.forEach((doc) => {
+  //         //   dispatch(customersInfo([doc.data()]));
+  //         //   // doc.data() is never undefined for query doc snapshots
+  //         //   console.log(doc.id, ' => cc ', doc.data());
+  //         // });
+  //       } catch (error: any) {
+  //         console.log(error.message);
+  //         // setFirebaseErr(error.message);
+  //       }
+  //     };
+
+  //     // console.log('Helloooooo there ', ordersSlice);
+
+  //     getOrders();
+  //   }, 2500);
+
+  //   return () => clearTimeout(timeout);
+  // }, []);
+
+  useEffect(() => {
+    setTrigger(!trigger);
+  }, []);
 
   useEffect(() => {
     const getOrders = async () => {
@@ -58,10 +105,10 @@ const CarouselCards = () => {
       }
     };
 
-    // console.log('Helloooooo there ', ordersSlice);
-
     getOrders();
-  }, [orders]);
+  }, [ordersSlice]);
+
+  // console.log('Helloooooo there ', trigger);
 
   return (
     <View>

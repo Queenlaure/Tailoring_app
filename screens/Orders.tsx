@@ -6,9 +6,10 @@ import {
   TextInput,
   Image,
   ScrollView,
+  Platform,
 } from 'react-native';
 import { COLORS } from '../utils/colors';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
   collection,
@@ -26,6 +27,16 @@ import { CustomerType, customersInfo } from '../store/customer/customerSlice';
 import { OrdersType, ordersInfo } from '../store/orders/ordersSlice';
 import Search from '../components/inputFields/Search';
 import CustomModalText from '../components/modals/CustomModalText';
+import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 const Orders = ({ navigation }: any) => {
   const categories = ['ALL', 'URGENT', 'COMPLETED'];
@@ -36,6 +47,33 @@ const Orders = ({ navigation }: any) => {
     [] as OrdersType[]
   );
   const [showModal, setShowModal] = useState(false);
+  const [expoPushToken, setExpoPushToken] = useState<any>('');
+  const [notification, setNotification] = useState<any>(false);
+  const notificationListener = useRef<any>();
+  const responseListener = useRef<any>();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
 
   const UpdateToCompleted = async (id: string) => {
     const docRef = doc(db, 'orders', id);
@@ -51,6 +89,125 @@ const Orders = ({ navigation }: any) => {
         console.log(error);
       });
   };
+
+  // console.log(catergoryIndex);
+
+  const dispatch = useDispatch();
+
+  // const [searchText, setSearchText] = useState('');
+  // const [filteredData, setFilteredData] = useState<CustomerType[]>(
+  //   [] as CustomerType[]
+  // );
+  const [orders, setOrders] = useState<any>([]);
+
+  const tailorSlice = useSelector((state: RootState) => state.tailor);
+  const ordersSlice = useSelector((state: RootState) => state.orders);
+
+  const doSomething = async () => {
+    console.log('Action fgwhgfhgfghtwr asdasd performed at 6:15am');
+    await schedulePushNotification();
+  };
+
+  var now: any = new Date();
+  var millisTill9: any =
+    (new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      7,
+      13,
+      0,
+      0
+    ) as any) - now;
+  if (millisTill9 < 0) {
+    millisTill9 += 86400000; // it's after 9am, try 9am tomorrow.
+  }
+  setTimeout(doSomething, millisTill9);
+
+  // console.log('queens');
+  // console.log('queens', ordersSlice.orders[0].dueDate);
+  // var orderDate;
+  // var previousDay;
+  ordersSlice.orders.map((order) => {
+    const today = new Date();
+    const orderDate = new Date(order.dueDate.seconds * 1000);
+    orderDate.setDate(orderDate.getDate() - 1);
+
+    if (today === orderDate) {
+      // console.log('The date is exactly one day before today');
+    } else {
+      // console.log('The date is not exactly one day before today');
+      var now: any = new Date();
+      var millisTill9: any =
+        (new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          12,
+          0,
+          0,
+          0
+        ) as any) - now;
+      if (millisTill9 < 0) {
+        millisTill9 += 86400000; // it's after 9am, try 9am tomorrow.
+      }
+      setTimeout(doSomething, millisTill9);
+    }
+  });
+
+  // const edit = new Date(
+  //   ordersSlice?.orders[0]?.dueDate.seconds * 1000
+  // ).toLocaleDateString('en-US', {
+  //   weekday: 'long',
+  //   year: 'numeric',
+  //   month: 'long',
+  //   day: 'numeric',
+  // });
+
+  // console.log(edit);
+
+  // useEffect(() => {
+  //   const timeout = setTimeout(() => {
+  //     const getOrders = async () => {
+  //       try {
+  //         // Create a query against the collection.
+  //         const ordersRef = collection(db, 'orders');
+  //         const q = query(
+  //           ordersRef,
+  //           // where('tailorEmail', '==', tailorSlice.user.email)
+  //           where('tailorEmail', '==', tailorSlice.user.email)
+  //         );
+
+  //         const querySnapshot = await getDocs(q);
+  //         // console.log(querySnapshot);
+
+  //         setOrders(
+  //           querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+  //         );
+
+  //         dispatch(ordersInfo(orders));
+  //         // console.log('queens', customers);
+
+  //         // querySnapshot.docs.forEach((doc) => {
+  //         //   dispatch(customersInfo([doc.data()]));
+  //         //   // doc.data() is never undefined for query doc snapshots
+  //         //   console.log(doc.id, ' => cc ', doc.data());
+  //         // });
+  //       } catch (error: any) {
+  //         console.log(error.message);
+  //         // setFirebaseErr(error.message);
+  //       }
+  //     };
+
+  //     // console.log('Helloooooo there ', ordersSlice);
+
+  //     getOrders();
+  //   }, 2500);
+
+  //   return () => clearTimeout(timeout);
+  // }, []);
+
+  // console.log('asdsa');
 
   // const timeObj = new Timestamp();
 
@@ -79,73 +236,6 @@ const Orders = ({ navigation }: any) => {
       </View>
     );
   };
-
-  // console.log(catergoryIndex);
-
-  const dispatch = useDispatch();
-
-  // const [searchText, setSearchText] = useState('');
-  // const [filteredData, setFilteredData] = useState<CustomerType[]>(
-  //   [] as CustomerType[]
-  // );
-  const [orders, setOrders] = useState<any>([]);
-
-  const tailorSlice = useSelector((state: RootState) => state.tailor);
-  const ordersSlice = useSelector((state: RootState) => state.orders);
-
-  // console.log('queens', filteredData);
-  // console.log('queens', ordersSlice.orders[0].dueDate);
-  const edit = new Date(
-    ordersSlice?.orders[0]?.dueDate.seconds * 1000
-  ).toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-
-  // console.log(edit);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      const getOrders = async () => {
-        try {
-          // Create a query against the collection.
-          const ordersRef = collection(db, 'orders');
-          const q = query(
-            ordersRef,
-            // where('tailorEmail', '==', tailorSlice.user.email)
-            where('tailorEmail', '==', tailorSlice.user.email)
-          );
-
-          const querySnapshot = await getDocs(q);
-          // console.log(querySnapshot);
-
-          setOrders(
-            querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-          );
-
-          dispatch(ordersInfo(orders));
-          // console.log('queens', customers);
-
-          // querySnapshot.docs.forEach((doc) => {
-          //   dispatch(customersInfo([doc.data()]));
-          //   // doc.data() is never undefined for query doc snapshots
-          //   console.log(doc.id, ' => cc ', doc.data());
-          // });
-        } catch (error: any) {
-          console.log(error.message);
-          // setFirebaseErr(error.message);
-        }
-      };
-
-      // console.log('Helloooooo there ', ordersSlice);
-
-      getOrders();
-    }, 2500);
-
-    return () => clearTimeout(timeout);
-  }, []);
 
   const handleFilter = (valueText: any) => {
     setSearchText(valueText);
@@ -193,7 +283,7 @@ const Orders = ({ navigation }: any) => {
       {searchText ? (
         <ScrollView showsVerticalScrollIndicator={false}>
           {filteredData.map((order: OrdersType, index: any) => (
-            <View>
+            <View key={index}>
               <TouchableOpacity
                 key={index}
                 activeOpacity={0.8}
@@ -268,9 +358,9 @@ const Orders = ({ navigation }: any) => {
       ) : (
         <ScrollView showsVerticalScrollIndicator={false}>
           {ordersSlice.orders.map((order: OrdersType, index: any) => (
-            <View>
+            <View key={index}>
               {catergoryIndex === 0 && order.completed === false ? (
-                <View>
+                <View key={index}>
                   <TouchableOpacity
                     key={index}
                     activeOpacity={0.8}
@@ -375,7 +465,7 @@ const Orders = ({ navigation }: any) => {
               ) : catergoryIndex === 1 &&
                 order.urgent === true &&
                 order.completed === false ? (
-                <View>
+                <View key={index}>
                   <TouchableOpacity
                     key={index}
                     activeOpacity={0.8}
@@ -439,6 +529,14 @@ const Orders = ({ navigation }: any) => {
                           : ''}
                       </Text>
                       <Text style={{ fontSize: 13, color: COLORS.lightBrown }}>
+                        {/* {new Date(
+                          order?.dueDate.seconds * 1000
+                        ).toLocaleDateString('en-US', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })} */}
                         Due: 30/08/2023
                       </Text>
                     </View>
@@ -468,7 +566,7 @@ const Orders = ({ navigation }: any) => {
                   )}
                 </View>
               ) : catergoryIndex === 2 && order.completed ? (
-                <View>
+                <View key={index}>
                   <TouchableOpacity
                     key={index}
                     activeOpacity={0.8}
@@ -532,7 +630,14 @@ const Orders = ({ navigation }: any) => {
                           : ''}
                       </Text>
                       <Text style={{ fontSize: 13, color: COLORS.lightBrown }}>
-                        Due: 30/08/202
+                        {new Date(
+                          order?.dueDate.seconds * 1000
+                        ).toLocaleDateString('en-US', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
                       </Text>
                     </View>
                   </TouchableOpacity>
@@ -581,6 +686,50 @@ const Orders = ({ navigation }: any) => {
     </View>
   );
 };
+
+async function schedulePushNotification() {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: 'TailorEazy ✂️',
+      body: "Naomi's order is due tommorow",
+      data: { data: 'goes here' },
+    },
+    trigger: { seconds: 2 },
+  });
+}
+
+async function registerForPushNotificationsAsync() {
+  let token;
+
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(token);
+  } else {
+    alert('Must use physical device for Push Notifications');
+  }
+
+  return token;
+}
 
 const style = StyleSheet.create({
   categoryContainer: {

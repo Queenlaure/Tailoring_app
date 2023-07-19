@@ -16,6 +16,7 @@ import {
   Raleway_400Regular,
   Raleway_900Black,
 } from '@expo-google-fonts/raleway';
+import { LogBox } from 'react-native';
 
 const GetStarted = ({ navigation }: any) => {
   // const { customer } = route.params;
